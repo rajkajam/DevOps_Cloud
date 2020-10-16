@@ -1,0 +1,338 @@
+https://www.youtube.com/watch?v=RSIstPUiEjY
+
+Management Commands:
+  builder     Manage builds
+  config      Manage Docker configs
+  container   Manage containers
+  context     Manage contexts
+  engine      Manage the docker engine
+  image       Manage images
+  network     Manage networks
+  node        Manage Swarm nodes
+  plugin      Manage plugins
+  secret      Manage Docker secrets
+  service     Manage services
+  stack       Manage Docker stacks
+  swarm       Manage Swarm
+  system      Manage Docker
+  trust       Manage trust on Docker images
+  volume      Manage volumes
+
+Commands:
+  attach      Attach local standard input, output, and error streams to a running container
+  build       Build an image from a Dockerfile
+  commit      Create a new image from a container's changes
+  cp          Copy files/folders between a container and the local filesystem
+  create      Create a new container
+  diff        Inspect changes to files or directories on a container's filesystem
+  events      Get real time events from the server
+  exec        Run a command in a running container
+  export      Export a container's filesystem as a tar archive
+  history     Show the history of an image
+  images      List images
+  import      Import the contents from a tarball to create a filesystem image
+  info        Display system-wide information
+  inspect     Return low-level information on Docker objects
+  kill        Kill one or more running containers
+  load        Load an image from a tar archive or STDIN
+  login       Log in to a Docker registry
+  logout      Log out from a Docker registry
+  logs        Fetch the logs of a container
+  pause       Pause all processes within one or more containers
+  port        List port mappings or a specific mapping for the container
+  ps          List containers
+  pull        Pull an image or a repository from a registry
+  push        Push an image or a repository to a registry
+  rename      Rename a container
+  restart     Restart one or more containers
+  rm          Remove one or more containers
+  rmi         Remove one or more images
+  run         Run a command in a new container
+  save        Save one or more images to a tar archive (streamed to STDOUT by default)
+  search      Search the Docker Hub for images
+  start       Start one or more stopped containers
+  stats       Display a live stream of container(s) resource usage statistics
+  stop        Stop one or more running containers
+  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+  top         Display the running processes of a container
+  unpause     Unpause all processes within one or more containers
+  update      Update configuration of one or more containers
+  version     Show the Docker version information
+  wait        Block until one or more containers stop, then print their exit codes
+
+
+
+Docker installation steps:
+https://docs.docker.com/engine/install/centos/
+
+
+Release channels
+
+Docker Engine has three types of update channels, stable, test, and nightly:
+
+    The Stable channel gives you latest releases for general availability.
+    The Test channel gives pre-releases that are ready for testing before general availability (GA).
+    The Nightly channel gives you latest builds of work in progress for the next major release.
+
+systemctl start docker
+systemctl enable docker
+
+docker pull centos
+docker pull ubuntu
+docker pull ubuntu:19.10  ( to download specific version of ubuntu image)
+docker run hello-world
+docker run centos
+
+docker images ( to list the local images available)
+docker image ls
+
+docker run -d --name ubuntu_19.10 ubuntu:19.10
+
+docker run -it centos
+docker run -it -d centos ( in detached mode (in backgroup))
+
+docker tag centos:latest rajkajam/centos_demo  ( creating a cutomized image)
+docker login  ( rajkajam )
+docker push rajkajam/centos_demo
+
+
+docker ps  ( to see the list running dockers )
+docker ps -a ( to list all docker container and it's status)
+
+
+docker exec -it 2510b5c4d8fe bash  (instance ID) - access your container in interactive mode.
+
+docker stop e9306a936cf2 ( to stop required docker container )
+
+docker ps -aq ( to list all dockers continer IDs )
+
+docker stop $(docker ps -aq) ==> to stop all containers
+docker rm <container ID>
+docker rm $(docker ps -aq)  ==> to remove all containers
+docker rmi <image ID>
+docker rmi $(docker images -q) ==> Remove all images
+
+docker commit b115372d18bd zuliakha/ubuntu  ( to create  new docker image using existing/modified container ID )
+
+configure own registry in server for your project/company:
+
+create web application using docker:
+
+mkdir /webapplication
+
+
+Docker file syntax: ( comments and comamnds + arguments )
+# print "welcome to edureka"
+RUN echo "Welcome to Edureka"
+
+FROM ubuntu
+RUN yum install -y java
+CMD "echo" "Welcome to Edureka"  ( it will be used to build docker image)
+
+CMD "Welcome to Edureka"
+ENTRYPOINT echo  ( ENTRYPOINT basically overwrite your CMD commands)
+
+ADD /source-dir /dest_dir ( to copy files from one dir to antoher dir)
+
+ENV SERVER_WORKS 4  ( environment key file)
+
+WORKDIR /path WORKDIR ~/
+
+EXPOSE 8080  (EXPOSE PORT)
+
+MAINTAINER author_name
+
+USER 751 (USER uid)
+
+VOLUME ["/My_files"]
+
+
+Example: DockerFile for installing Apache 
+#######################################
+# create a file called "dockerfile" in /dockers folder with the below given syntax"
+
+FROM ubuntu
+MAINTAINER Rajesh
+RUN apt-get update && apt-get install -y apache2 && apt-get clean && rm -rf /var/lib/apt/lists/*
+#RUN yum -y update && yum install -y http
+
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+# ENV APACHE_LOG_DIR /var/log/httpd
+EXPOSE 80
+
+CMD ["/usr/sbin/apache2", "-D", "FOREGROUND"]
+#CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+################################################
+
+cd /dockers
+docker build -t myapacheimage .   ( will take some time to build image, check for updates if any errors)
+
+docker images
+
+docker run -p 80:80 --name=App1 myapacheimage  ( first 80 is of host, 2nd 80 is of container)
+
+================== installaing nginx=============
+FROM centos
+MAINTAINER Rajesh
+RUN yum -y update && yum install -y nginx
+ADD index.html /usr/share/nginx/html/index.html  ( copy from base machine to the container location)
+
+ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
+EXPOSE 80
+===========================================
+docker container logs
+docker container kill
+docker container rm
+docker container run
+docker container start
+
+docker export --output="mydockertarfile" mycontainerID  (to export docker image)
+docker import /home/dockers/mydockertarfile
+
+On docker1:
+docker commit 97f20600d7a3 "mynewapache"
+docker save mynewapache > /dockers/images/mynewapache.tar
+
+On docker2:
+docker load < /dockers/images/mynewapache.tar
+
+
+docker-compose build -  It is used to run multi-container applications. Build multiple containers using .yaml docker file. each container will run a stand alone application and it can communicate with other containers present in the same host. Ex: MEANstack application (Mongo DB(M), ExpressJS(E), Angular(A), NodeJS(N) using different containers. MEAN is a full-stack javascript solution that helps you build fast, robust and mintainable production web applications using MongoDB, Express, Angular and Node.js.
+Angular - Front end client, Express - Backend server & MongoDB is the database.
+
+docker-compose up
+docker swarm (watch seperate video to become a docker professional)
+docker swarm init --advertise-addr 192.168.122.2 (VM IP) (cretaes a network of docker/engines /hosts to execute containers in parallel (for scaling up and HA) 
+firewall-cmd --add-port=2377/tcp --permanent  (on manager node) & systemctl restart firewalld
+firewall-cmd --add-port=7946/tcp --permanent
+docker swarm join --token SWMTKN-1-1ewq6qwjfmksnnre76scicjsfjigjafmou976aq0jyy4gfd8f2-emmnuspht9b7b56h5bf01vp5k 192.168.122.2:2377  ( on workder nodes)
+docker service create --name "myapache" -p 80:80 mynewapache
+docker service ls
+docker service ps mynewapache
+
+docker service create --name "myapache" -p 80:80 --mode global mynewapache ( to start the instance on swarm nodes.)
+docker service create --name "myapache" -p 80:80 --replicas 2 mynewapache
+docker service scale myapache=5
+docker node update --availability drain docker1  ( to remove manager node/any node from serving the services )
+docker node update --availability active docker1
+docker node update --availability pause docker1
+
+docker swarm join
+docker swarm join-token
+docker swarm leave
+
+
+The below service commands work and in sync with swarm and docker compose, can run these comamnd only on manager node
+docker service ls
+docker service ps <name>
+docker service scale <name>=5
+docker service stop
+docker service logs
+docker service create <name> <image-name>
+docker service rm <name>
+docker swam leave --force ( to leave the node from docker swarm (cluster) )
+
+docker node ls
+docker node ps
+docker node rm <id>
+
+
+###############################################################
+cat >> docker-compose.yml
+
+version: '3.0' # specifiy docker-compose version
+
+# Define the services/containers to be run
+services:
+   angular: #name of the first service
+     build: angular-app # specify the directory of the dockerfile
+     ports:
+       - "4200:4200" # specify ports mapping
+
+   express: #name of the second service
+     build: express-server # specify the directory of the dockerfile
+     ports:
+       - "3000:3000" # specify ports mapping
+     links:
+       - database # link this service to the database service
+
+   database: # name of the third service
+     image: mongo # specify image to build container from
+     ports:
+       - "27017:27017" # specify port forewarding
+
+-------------
+in angular-app folder,
+cat >> dockerfile
+FROM node:6
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+COPY package.json /usr/src/app
+RUN npm cache clean
+RUN npm install
+COPY . /usr/src/app
+EXPOSE 4200
+CMD ["npm", "start"]
+
+---------------------------
+in express-server folder,
+cat >> dockerfile
+FROM node:6
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+COPY package.json /usr/src/app
+RUN npm cache clean
+RUN npm install
+COPY . /usr/src/app
+EXPOSE 3000
+CMD ["npm", "start"]
+
+
+#################################################################     
+
+Docker networking: Container Network Model (CNM) objects:
+
+Network Controller: Provides the entry-point into Libnetwork that exposes simple APIs for Docker Engine to allocate and manage networks. Since Libnetwork supports multiple inbuilt and remote drivers, Network Controller enables users to attach a particular driver to a given network.
+
+Driver: Owns the network and is responsible for managing the network by having multiple drivers participating to satisfy various use-cases and deployment scenarios.
+
+Network:  Provides connectivity between a group of endpoints that belong to the same network and isolate from the rest. So, whenever a network is created or updated, the corresponding Driver will be notified of the event.
+
+Endpoint: Provides the connectivity for services exposed by a container in a network with other services provided by other containers in the network. An endpoint represents a service and not necessarily a particular container, Endpoint has a global scope within a cluster as well.
+
+Sandbox: Created when users request to create an endpoint on a network. A Sandbox can have multiple endpoints attached to different networks representing container’s network configuration such as IP-address, MAC-address, routes, DNS.
+
+
+Network Drivers: There are four types of network drivers.
+1) Bridge - The bridge network is a private default internal network created by docker on the host. So, all containers get an internal IP address and these containers can access each other, using this internal IP. The Bridge networks are usually used when your applications run in standalone containers that need to communicate.
+
+2) Host - This driver removes the network isolation between the docker host and the docker containers to use the host’s networking directly. So with this, you will not be able to run multiple web containers on the same host, on the same port as the port is now common to all containers in the host network.
+
+3) None - In this kind of network, containers are not attached to any network and do not have any access to the external network or other containers. So, this network is used when you want to completely disable the networking stack on a container and, only create a loopback device.
+
+4) Overlay - 	Creates an internal private network that spans across all the nodes participating in the swarm cluster. So, Overlay networks facilitate communication between a swarm service and a standalone container, or between two standalone containers on different Docker Daemons.
+
+5) Macvlan - Allows you to assign a MAC address to a container, making it appear as a physical device on your network. Then, the Docker daemon routes traffic to containers by their MAC addresses. Macvlan driver is the best choice when you are expected to be directly connected to the physical network, rather than routed through the Docker host’s network stack.
+
+
+Hands-ON:
+
+docker network create -d overlay myoverlay1	
+
+docker service create --name webapp1 -d --network myoverlay1 -p 8001:80 hshar/webapp
+docker service ls
+
+docker service create --nmae mysql -d --network myoverlay1 -p 3306:3306 hshar/mysql:5.5
+docker service ls
+
+
+
+
+
+
+
+
+
+

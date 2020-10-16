@@ -1,0 +1,308 @@
+GIT:
+https://www.youtube.com/watch?v=hQcFE0RD0cQ - DevOps Edureka Video
+
+Install and setup git in CentOS:
+https://linuxize.com/post/how-to-install-git-on-centos-7/
+
+Install and configure Jenkins:
+https://linuxize.com/post/how-to-install-jenkins-on-centos-7/
+or
+https://www.linuxtechi.com/install-configure-jenkins-on-centos-7-rhel-7/
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCSiEWUkfWtfD1idLvN48Ur0ShBhC9ZHSN8LKz+O0DsJGpdzrkjHiydF16jP8ZhZN0K+yNVzZQvgCb75i9Li7PwlrMapUdZuZLF4pX/0MxTatQRaikLOXMb/zryHz393cxIK+0L7uUEzQrKbK5BnPd+BPO8s0cBfOaxaHfAjqhwVgVe0yIEBXrM1N7In9Yqa62oY2Yj9JSswNFE7StSN7iLhxD/hr5lB+aeqrApMQTx1YyDW7pLm8wAb0kJYTw3UAFlSDFbi9LgEB42hEE7vUu4rMIIVgJeKmpYxmGLIEP0Bmfu3GUiM3z2n1pY4NkAgeXd4O2XZCjtI0mJ3udOuwRv root@centos1
+
+
+git remote add origin git@github.com:rajkajam/DevOps.git
+
+git pull --allow-unrelated-histories
+
+
+
+[test-servers]
+centos2 ansible_ssh_host=192.168.94.133
+centos3 ansible_ssh_host=192.168.94.134
+
+basic intro to ansible
+what are the modules in ansible
+static inventory
+what is playbook
+what is dynamic inventory
+create play book
+ansbile role
+how to mange simple playbooks
+
+https://www.linuxtechi.com/install-and-use-ansible-in-centos-7/ ( Ansible install and configure on CenOS)
+https://www.tecmint.com/install-ansible-on-centos-rhel-8/ ( Ansible install and configure on RHEL8 )
+
+Ansible is a configuration managemnet tool to automate the regular system admin and software developer/tester tasks. Ansible playbooks are used to send the single or set of commands to remote machines in as scipted way. At basic level, Playbooks can be used to manage the configurations and deployments to remote machines. At more advanced level, they can sequence multi-tier rollouts involving rolling updates, and can delegate actions to other hosts, interacting with monitoring servers and load balancers.
+
+Playbooks are designed to be human-readable and are developed in a basic text language, are written in YAML data serialitr5azation format.
+
+Sample playbook - To install and configure apache server.
+
+---
+- hosts: test-servers
+  user: dpnipat1
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: 1. Install latest version of HTTP/Apache RPMs
+    yum: name=httpd state=present
+
+  - name: 2. Start httpd service
+    service: name=httpd state=started enabled=yes
+
+  - name: 3. copy the standard index.html file
+    copy: src=/tmp/index.html dest=/var/www/html/index.html mode=0664
+
+  - name: 4. add apache iptable rule
+    command: /usr/sbin/iptables -I INPUT 1 -p tcp --dport http -j ACCEPT -m comment --comment "Apache on port 80"
+
+  - name: 5. save iptable rule
+    command: iptables-save
+
+# ansible-playbook webserver.yaml -l centos2 -vvv ( to limit the execution to only one server i.e centos2,, -vvv for verbose )
+
+# ansible-doc yum (to see the options)
+
+-name: To install multiple packages:
+ yum: name=httpd,ntp,ksh state=present
+
+# to create multiple users using loop, coz user module doesnt support to specify multiple users like module yum.
+-name: to create multiple users
+ user: name={{ item }} state=present
+ with_items:
+  - user2
+  - user3
+  - user4
+  - user5
+  - user6
+
+ansible all -i localhost, -m debug -a "msg={{ 'Pa$$w0rd' | password_hash('sha512', 'mysecretsalt') }}"
+"$6$mysecretsalt$Y8Pm0TGj0Wtl/C6OKI5HNGeb7SwiFiwC1NDPY6fzn8XVH3Pbv1nQPazPgyjYlE4fKQV3JxdKDcFsu.cR9o5cW0"
+'$6$mysecretsalt$bkdr1Sgi6wtjVTlnL38S9IS.bJV3.zM106ytnYpwtY/rkdeRyEH.Ovq3dkuiMP.8/244RZqnvrkbUUzYfTx1m/'
+https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#how-do-i-generate-encrypted-passwords-for-the-user-module
+
+How do I keep secret data in my playbook?
+- name: secret task
+  shell: /usr/bin/do_something --value={{ secret_value }}
+  no_log: True
+
+ansible all -i TP-servers, -m debug -a "msg={{ 'ansible' | password_hash('sha512', 'mysecretsalt') }}"
+
+
+Generate encrypted hashed password in linux to update in ansible for user creation:
+https://serversforhackers.com/c/create-user-in-ansible
+
+ansible -m ping test-servers
+ansible -m shell -a "/sbin/ifconfig" centos3
+ansible -m shell -a "/sbin/ifconfig" test-servers
+
+https://docs.ansible.com/ansible/2.4/playbooks_tags.html
+playbook tags - to run only the specified tasks in a playbook instead running complete playbook.
+# ansible-playbook playbookname --list-tags ( to list the tag names )
+# ansible-playbook --tags tagname playbookname
+# ansible-playbook --tags tag1,tag2 playbookname ( to execute multiple tags )
+==================================
+Redhat server patching using Ansible
+===================================
+---
+- hosts: test-servers
+  user: dpnipat1
+  become: yes
+  become_method: sudo
+  tasks:
+   # purpose of this task to check if application is running or stopped
+   - name: verify application/database processes are not running
+     shell: if ps -eaf |egrep -i "apache|http"|grep -v grep> /dev/null;then echo 'process_running';else echo 'process_not_running';
+fi
+     ignore_errors: true
+     register: app_process_check
+
+   # This task is decission, play will fail/quit, if application is running
+   - name: decission point to start patching
+     fail: msg="{{ inventory_hostname }} have running application. please stop the application first, then attempt patching."
+     when: app_process_check.stdout == "process_running"
+
+   # This task will upgrade/install the rpm's if application is stopped
+   - name: upgrade all packages on the server
+     yum:
+      name="*"
+      state=latest
+     when: app_process_check.stdout == "process_not_running" and ansible_distribution == 'CentOS' or ansible_distribution == "Redhat"
+     register: yum_update
+
+   # This task is to check if kernel update happend and system needs reboot or not
+   - name: check if reboot required after kernel update.
+     shell: KERNEL_NEW=$(rpm -qa --last kernel |head -1|awk '{print $1}' | sed 's/kernel.//'); KERNEL_NOW=$(uname -r);if [[ $KERNEL_NEW != $KERNEL_NOW ]]; then echo "reboot_needed"; else echo "reboot_not_needed"; fi
+     ignore_errors: true
+     register: reboot_required
+
+   # This task is to restart the system
+   - name: restart system
+     command: shutdown -r +1 "rebooting system after patching"
+     async: 0
+     poll: 0
+     when: reboot_required.stdout == "reboot_needed"
+     register: reboot_started
+     ignore_errors: true
+
+   # This task is to wait for 3 minutes for system to come up after the reboot
+   - name: check if system responding to ssh
+     local_action:
+      module: wait_for
+       hosts={{ inventory_hostname }}
+       port=22
+       delay=15
+       timeout=300
+       state=started
+     when: reboot_started|changed
+================================================
+
+Command to see the distribution list of ansible:
+ansible -m setup all -l test-servers | grep ansible_distribution 
+
+##################  RONDA ############
+
+---
+- hosts: webservers
+ become: yes
+ tasks:
+   - name: install Apache server
+     yum:
+       name: httpd
+       state: latest
+
+   - name: enable and start Apache server
+     service:
+       name: httpd
+       enabled: yes
+       state: started
+
+   - name: open firewall port
+     firewalld:
+       service: http
+       immediate: true
+       permanent: true
+       state: enabled
+
+   - name: create web admin group
+     group:
+       name: web
+       state: present
+
+   - name: create web admin user
+     user:
+       name: webadm
+       comment: "Web Admin"
+       password: $6$rounds=656000$bp7zTIl.nar2WQPS$U5CBB15GHnzBqnhY0r7UX65FrBI6w/w9YcAL2kN9PpDaYQIDY6Bi.CAEL6PRRKUqe2bJYgsayyh9NOP1kUy4w.
+       groups: web
+       append: yes
+
+   - name: set content directory group/permissions 
+     file:
+       path: /var/www/html
+       owner: root
+       group: web
+       state: directory
+       mode: u=rwx,g=rwx,o=rx,g+s
+
+   - name: create default page content
+     copy:
+       content: "Welcome to {{ ansible_fqdn}} on {{ ansible_default_ipv4.address }}"
+       dest: /var/www/html/index.html
+       owner: webadm
+       group: web
+       mode: u=rw,g=rw,o=r
+
+- hosts: dbservers
+ become: yes
+ tasks:
+   - name: install MariaDB server
+     yum:
+       name: mariadb-server
+       state: latest
+
+   - name: enable and start MariaDB server
+     service:
+       name: mariadb
+       enabled: yes
+       state: started
+
+- hosts: logservers
+ become: yes
+ tasks:
+   - name: configure rsyslog remote log reception over udp
+     lineinfile:
+       path: /etc/rsyslog.conf
+       line: "{{ item }}"
+       state: present
+     with_items:
+       - '$ModLoad imudp'
+       - '$UDPServerRun 514'
+     notify:
+       - restart rsyslogd
+
+   - name: open firewall port
+     firewalld:
+       port: 514/udp
+       immediate: true
+       permanent: true
+       state: enabled
+
+ handlers:
+   - name: restart rsyslogd
+     service:
+       name: rsyslog
+       state: restarted
+
+- hosts: lamp
+ become: yes
+ tasks:
+   - name: configure rsyslog
+     lineinfile:
+       path: /etc/rsyslog.conf
+       line: '*.* @192.168.102.215:514'
+       state: present
+     notify:
+       - restart rsyslogd
+
+ handlers:
+   - name: restart rsyslogd
+     service:
+       name: rsyslog
+       state: restarted
+
+=============================================
+
+Ansible Tower installation & configuration:
+
+https://computingforgeeks.com/install-and-configure-ansible-tower-on-centos-rhel/
+
+
+in Inventory file set these three passwords.
+admin_password='AdminPassword'
+pg_password='PgStrongPassword'
+rabbitmq_password='RabbitmqPassword'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

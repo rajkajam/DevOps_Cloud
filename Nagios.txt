@@ -1,0 +1,13 @@
+https://www.youtube.com/watch?v=JHoy3lDZOfY
+at 8:34:00 time stamp.
+
+Nagios, now known as Nagios core, is a free and open source computer-software application that monitors systems, networks and infrastructure. Nagios offers monitoring and alerting services for servers, switches, applications and services.
+
+Server/client method.
+
+Architecture:
+
+Nagios GUI -> This is a web UI, which can be used to check the status of the host or the services.
+scheduler -> This does the job of scheduling checks i.e what to check and when to check.
+NRPE plugins -> The clients do not have Nagios installed on them, the log data or clients are sent through plugins.
+

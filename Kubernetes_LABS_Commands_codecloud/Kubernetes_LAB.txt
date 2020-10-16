@@ -1,0 +1,292 @@
+kubectl run redis --image=redis123 --dry-run=client -o yaml > pod-definition.yaml  ( to create a yaml file before actually run the pod)
+kubectl create -f pod-definition.yaml (kubectl apply -f pod-definition.yaml)
+kubectl edit pod redis  ( to edit the running pod details, here update the correct image namem change from redis123 to redis) or edit the pod-definition file in vi editor and run "kubectl apply -f pod-definition.yaml" )
+
+kubectl get pods
+No resources found in default namespace.
+
+kubectl run nginx --image=nginx
+pod/nginx created
+
+master $ kubectl get pods
+NAME    READY   STATUS    RESTARTS   AGE
+nginx   1/1     Running   0          35s
+
+wait for few seconds.
+
+master $ kubectl get pods
+NAME            READY   STATUS    RESTARTS   AGE
+newpods-77n45   1/1     Running   0          55s
+newpods-blptz   1/1     Running   0          55s
+newpods-hhd4d   1/1     Running   0          55s
+nginx           1/1     Running   0          2m47s
+
+master $ kubectl describe pod newpods-77n45 |grep -i image
+    Image:         busybox
+    Image ID:      docker-pullable://busybox@sha256:d366a4665ab44f0648d7a00ae3fae139d55e32f9712c67accd604bb55df9d05a
+  Normal  Pulling    3m28s  kubelet, node01    Pulling image "busybox"
+  Normal  Pulled     3m22s  kubelet, node01    Successfully pulled image "busybox"
+  
+master $ kubectl describe pod nginx |grep -i image
+    Image:          nginx
+    Image ID:       docker-pullable://nginx@sha256:9a1f8ed9e2273e8b3bbcd2e200024adac624c2e5c9b1d420988809f5c0c41a5e
+  Normal  Pulling    6m51s  kubelet, node01    Pulling image "nginx"
+  Normal  Pulled     6m43s  kubelet, node01    Successfully pulled image "nginx"
+  
+master $ kubectl get pods -o wide   (To see the pods and running on which nodes and the IP address of POD)
+NAME            READY   STATUS    RESTARTS   AGE     IP           NODE     NOMINATED NODE   READINESS GATES
+newpods-77n45   1/1     Running   0          6m27s   10.244.1.6   node01   <none>           <none>
+newpods-blptz   1/1     Running   0          6m27s   10.244.1.5   node01   <none>           <none>
+newpods-hhd4d   1/1     Running   0          6m27s   10.244.1.4   node01   <none>           <none>
+nginx           1/1     Running   0          8m19s   10.244.1.3   node01   <none>           <none>
+
+master $ kubectl get pods -o wide
+NAME            READY   STATUS             RESTARTS   AGE   IP           NODE     NOMINATED NODE   READINESS GATES
+newpods-77n45   1/1     Running            0          10m   10.244.1.6   node01   <none>           <none>
+newpods-blptz   1/1     Running            0          10m   10.244.1.5   node01   <none>           <none>
+newpods-hhd4d   1/1     Running            0          10m   10.244.1.4   node01   <none>           <none>
+nginx           1/1     Running            0          12m   10.244.1.3   node01   <none>           <none>
+webapp          1/2     ImagePullBackOff   0          98s   10.244.1.7   node01   <none>           <none>
+
+master $ kubectl get pods webapp
+NAME     READY   STATUS             RESTARTS   AGE
+webapp   1/2     ImagePullBackOff   0          3m50s
+master $ kubectl get pods webapp -o wide
+NAME     READY   STATUS             RESTARTS   AGE   IP           NODE     NOMINATED NODE   READINESS GATES
+webapp   1/2     ImagePullBackOff   0          4m    10.244.1.7   node01   <none>           <none>
+
+master $ kubectl describe pod webapp (to see how many containers are running and their details)
+
+master $ kubectl delete pod webapp
+pod "webapp" deleted
+
+kubectl run redis --image=redis123 --dry-run=client -o yaml > pod.yaml
+cat pod.yaml
+master $ cat pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: redis
+  name: redisspec:
+  containers:
+  - image: redi123
+    name: redis
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+master $ kubectl apply -f pod.yaml
+pod/redis created
+
+master $ kubectl edit pod redis  (update the correct image name, change redis123 to redis, under spic, container, image)
+pod/redis edited
+
+master $ kubectl get pods
+NAME    READY   STATUS    RESTARTS   AGE
+redis   1/1     Running   0          10m
+
+master $ kubelet --version
+Kubernetes v1.18.0
+
+========================================================================================================================================================================
+
+Replication controller and Replica set
+
+master $ kubectl get pods
+No resources found in default namespace.
+
+master $ kubectl get replicasets.apps
+No resources found in default namespace.
+
+master $ kubectl get replicasets.apps
+NAME              DESIRED   CURRENT   READY   AGE
+new-replica-set   4         4         0       7s
+
+What is the image used to create the pods in the new-replica-set?
+
+master $ kubectl describe replicasets.apps new-replica-set
+Name:         new-replica-set
+Namespace:    default
+Selector:     name=busybox-pod
+Labels:       <none>
+Annotations:  <none>
+Replicas:     4 current / 4 desired
+Pods Status:  0 Running / 4 Waiting / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:  name=busybox-pod
+  Containers:
+   busybox-container:
+    Image:      busybox777
+    Port:       <none>
+    Host Port:  <none>
+    Command:
+      sh
+      -c
+      echo Hello Kubernetes! && sleep 3600
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Events:
+  Type    Reason            Age    From                   Message
+  ----    ------            ----   ----                   -------
+  Normal  SuccessfulCreate  3m13s  replicaset-controller  Created pod: new-replica-set-mp92n
+  Normal  SuccessfulCreate  3m13s  replicaset-controller  Created pod: new-replica-set-nhhjd
+  Normal  SuccessfulCreate  3m13s  replicaset-controller  Created pod: new-replica-set-6w7xs
+  Normal  SuccessfulCreate  3m13s  replicaset-controller  Created pod: new-replica-set-ccr44
+
+How many PODs are READY in the new-replica-set?
+
+master $ kubectl get pods
+NAME                    READY   STATUS             RESTARTS   AGE
+new-replica-set-6w7xs   0/1     ErrImagePull       0          6m12s
+new-replica-set-ccr44   0/1     ErrImagePull       0          6m12s
+new-replica-set-mp92n   0/1     ImagePullBackOff   0          6m12s
+new-replica-set-nhhjd   0/1     ImagePullBackOff   0          6m12s
+
+master $ kubectl describe pod new-replica-set-6w7xs
+Warning  Failed     5m15s (x4 over 6m46s)  kubelet, node01    Failed to pull image "busybox777": rpc error: code = Unknown desc = Error response from daemon: pull access denied for busybox777, repository does not exist or may require 'docker login': denied: requested access to theresource is denied
+
+Delete any one of the 4 PODs
+master $ kubectl delete  pod new-replica-set-6w7xs
+pod "new-replica-set-6w7xs" deleted
+
+How many PODs exist now?
+master $ kubectl get pods
+NAME                    READY   STATUS             RESTARTS   AGE
+new-replica-set-ccr44   0/1     ImagePullBackOff   0          9m39s
+new-replica-set-ds5mr   0/1     ErrImagePull       0          33s
+new-replica-set-mp92n   0/1     ImagePullBackOff   0          9m39s
+new-replica-set-nhhjd   0/1     ImagePullBackOff   0          9m39s
+
+ ( Replicaset ensure the desired number of pods are always 4 )
+ 
+Create a ReplicaSet using the 'replicaset-definition-1.yaml' file located at /root/
+There is an issue with the file, so fix it.
+
+master $ kubectl apply -f replicaset-definition-1.yaml
+error: unable to recognize "replicaset-definition-1.yaml": no matches for kind "ReplicaSet" in version "v1"
+
+update apiversion from v1 to apps/vi in the replica-set-1.yaml
+
+master $ kubectl apply -f replicaset-definition-1.yaml
+replicaset.apps/replicaset-1 created
+
+Fix the issue in the replicaset-definition-2.yaml file and create a ReplicaSet using it.
+
+master $ kubectl apply -f replicaset-definition-2.yaml
+The ReplicaSet "replicaset-2" is invalid: spec.template.metadata.labels: Invalid value: map[string]string{"tier":"nginx"}: `selector` does not match template `labels`
+
+change tier from nginx to frontend
+
+master $ kubectl apply -f replicaset-definition-2.yaml
+replicaset.apps/replicaset-2 created
+
+Delete the two newly created ReplicaSets - replicaset-1 and replicaset-2
+
+master $ kubectl get replicasets.apps
+NAME              DESIRED   CURRENT   READY   AGE
+new-replica-set   4         4         0       20m
+replicaset-1      2         2         2       3m32s
+replicaset-2      2         2         2       40s
+master $ kubectl delete replicasets.apps replicaset-1
+replicaset.apps "replicaset-1" deleted
+master $ kubectl delete replicasets.apps replicaset-2
+replicaset.apps "replicaset-2" deleted
+
+Fix the original replica set 'new-replica-set' to use the correct 'busybox' image
+Either delete and re-create the ReplicaSet or Update the existing ReplicSet and then delete all PODs, so new ones with the correct image will be created.
+
+master $ kubectl edit replicasets.apps new-replica-set   ( update correct image name, change busybox777 to busybox)
+replicaset.apps/new-replica-set edited
+
+delete all existing pods in order to create a new pods by replicaset
+master $ kubectl get pods
+NAME                    READY   STATUS             RESTARTS   AGE
+new-replica-set-ccr44   0/1     ImagePullBackOff   0          25m
+new-replica-set-ds5mr   0/1     ErrImagePull       0          16mnew-replica-set-mp92n   0/1     ImagePullBackOff   0          25m
+new-replica-set-nhhjd   0/1     ImagePullBackOff   0          25m
+master $ kubectl delete pod new-replica-set-ccr44
+pod "new-replica-set-ccr44" deleted
+master $ kubectl delete pod new-replica-set-ds5mr
+pod "new-replica-set-ds5mr" deleted
+master $ kubectl delete pod new-replica-set-mp92n
+pod "new-replica-set-mp92n" deleted
+master $ kubectl delete pod new-replica-set-nhhjd
+pod "new-replica-set-nhhjd" deleted
+
+or 
+
+master $ kubectl delete pod --all
+pod "new-replica-set-79lh2" deleted
+pod "new-replica-set-bf974" deleted
+pod "new-replica-set-lrv4q" deleted
+pod "new-replica-set-mbdj2" deleted
+master $ kubectl get pods
+NAME                    READY   STATUS    RESTARTS   AGE
+new-replica-set-2r7sr   1/1     Running   0          22s
+new-replica-set-bcx2j   1/1     Running   0          22s
+new-replica-set-pk5tg   1/1     Running   0          22s
+new-replica-set-s7msv   1/1     Running   0          22s
+
+Scale the ReplicaSet to 5 PODs
+master $ kubectl scale replicaset --replicas=5 new-replica-set
+replicaset.apps/new-replica-set scaled
+master $ kubectl get pods
+NAME                    READY   STATUS    RESTARTS   AGE
+new-replica-set-2r7sr   1/1     Running   0          4m9s
+new-replica-set-bcx2j   1/1     Running   0          4m9s
+new-replica-set-kbh8r   1/1     Running   0          22s
+new-replica-set-pk5tg   1/1     Running   0          4m9s
+new-replica-set-s7msv   1/1     Running   0          4m9s
+master $ kubectl get replicasets.apps
+NAME              DESIRED   CURRENT   READY   AGE
+new-replica-set   5         5         5       12m
+
+Now scale the ReplicaSet down to 2 PODs
+master $ kubectl scale replicaset --replicas=2 new-replica-set
+replicaset.apps/new-replica-set scaled
+master $ kubectl get pods
+NAME                    READY   STATUS        RESTARTS   AGE
+new-replica-set-2r7sr   1/1     Terminating   0          5m40s
+new-replica-set-bcx2j   1/1     Running       0          5m40s
+new-replica-set-kbh8r   1/1     Terminating   0          113s
+new-replica-set-pk5tg   1/1     Terminating   0          5m40s
+new-replica-set-s7msv   1/1     Running       0          5m40s
+
+master $ kubectl get pods
+NAME                    READY   STATUS    RESTARTS   AGE
+new-replica-set-bcx2j   1/1     Running   0          6m19s
+new-replica-set-s7msv   1/1     Running   0          6m19s
+
+===========================================================================================================================================================================
+
+Deployments:
+
+Certification Tip!
+
+As you might have seen already, it is a bit difficult to create and edit YAML files. Especially in the CLI. During the exam, you might find it difficult to copy and paste YAML files from browser to terminal. Using the kubectl run command can help in generating a YAML template. And sometimes, you can even get away with just the kubectl run command without having to create a YAML file at all. For example, if you were asked to create a pod or deployment with specific name and image you can simply run the kubectl run command.
+
+Use the below set of commands and try the previous practice tests again, but this time try to use the below commands instead of YAML files. Try to use these as much as you can going forward in all exercises
+
+Reference (Bookmark this page for exam. It will be very handy):
+https://kubernetes.io/docs/reference/kubectl/conventions/
+
+Create an NGINX Pod
+kubectl run --generator=run-pod/v1 nginx --image=nginx
+
+Generate POD Manifest YAML file (-o yaml). Don't create it(--dry-run)
+kubectl run --generator=run-pod/v1 nginx --image=nginx --dry-run -o yaml
+
+Create a deployment
+kubectl create deployment --image=nginx nginx
+
+Generate Deployment YAML file (-o yaml). Don't create it(--dry-run)
+kubectl create deployment --image=nginx nginx --dry-run -o yaml
+
+Generate Deployment YAML file (-o yaml). Don't create it(--dry-run) with 4 Replicas (--replicas=4)
+kubectl create deployment --image=nginx nginx --dry-run -o yaml > nginx-deployment.yaml
+
+Save it to a file, make necessary changes to the file (for example, adding more replicas) and then create the deployment.

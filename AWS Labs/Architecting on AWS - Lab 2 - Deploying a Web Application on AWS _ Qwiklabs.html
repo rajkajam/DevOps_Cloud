@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<!-- saved from url=(0069)https://in-globalknowledge-jp.qwiklabs.com/classrooms/2201/labs/10526 -->
+<html lang="en" class="mdl-js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+<meta content="[]" name="active-experiments">
+<meta content="{&quot;userId&quot;:10038}" name="help-api-product-data">
+<meta name="csrf-param" content="authenticity_token">
+<meta name="csrf-token" content="ss+5VsM1sFo/8Q0b1OwcruocGczxkN753cKW/AIEMUQlWcwx8+1TvbqvdkMgq0pNjUrTssJtAfZUaiHofHAEPQ==">
+<title>Architecting on AWS - Lab 2 - Deploying a Web Application on AWS | Qwiklabs</title>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0" name="viewport">
+<meta content="This lab will provide experience in using multiple AWS services to deploy a web application." name="description">
+<meta content="Qwiklabs" name="author">
+<meta content="1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0" name="google-site-verification">
+<meta content="Architecting on AWS - Lab 2 - Deploying a Web Application on AWS | Qwiklabs" property="og:title">
+<meta content="website" property="og:type">
+<meta content="/favicon-144.png" property="og:image">
+<meta content="Qwiklabs" property="og:site_name">
+<meta content="This lab will provide experience in using multiple AWS services to deploy a web application." property="og:description">
+<meta content="/qwiklabs_logo_900x887.png" property="og:logo" size="900x887">
+<meta content="/qwiklabs_logo_994x187.png" property="og:logo" size="994x187">
+<meta content="#3681E4" property="msapplication-TileColor">
+<meta content="/favicon-144.png" property="msapplication-TileImage">
+<link href="https://in-globalknowledge-jp.qwiklabs.com/favicon-32.png" rel="shortcut icon">
+<link color="#3681E4" href="https://in-globalknowledge-jp.qwiklabs.com/favicon-svg.svg" rel="mask-icon">
+<link href="https://in-globalknowledge-jp.qwiklabs.com/favicon-180.png" rel="apple-touch-icon-precomposed">
+<link rel="stylesheet" media="screen" href="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/css">
+
+
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script type="text/javascript" id="www-widgetapi-script" src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/www-widgetapi.js" async=""></script><script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Rajesh","lastname":"Kajam","fullname":"Rajesh Kajam","company":"IBM","email":"rajkajam@in.ibm.com","origin":"in-globalknowledge-jp, direct","subscriptions":0,"id":"0a49942ca9c15f1409a468330eccdd34","qlCreatedAt":"2020-07-20 07:43:31 UTC","optIn":true};gon.segment=null;gon.deployment="in-globalknowledge-jp";
+//]]>
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id="ze-snippet" src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/snippet.js"></script>
+
+
+
+<link rel="stylesheet" media="all" href="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/application-749104164b75521557868a77b2d7aff0fbf4a7fe61782febda59cb8858409ff2.css">
+<script>
+  EVENT_SOURCE_BASE_URL = "https://in-globalknowledge-jp.qwiklabs.com/nchan-sub?id=";
+</script>
+<script src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/webcomponents-loader.js"></script><script src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/webcomponents-hi.js"></script>
+<script src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/hallofmirrors-3676da3e8ba747de971a5fb8f510a97713f653829a575bd9beb7fc7aaf80b265.js"></script>
+<custom-style>
+  <style is="custom-style">[hidden] {
+  display: none !important;
+}
+
+</style>
+</custom-style>
+<custom-style>
+  <style is="custom-style">html {
+  --layout_-_display:  flex;;
+
+      --layout-inline_-_display:  inline-flex;;
+
+      --layout-horizontal_-_display:  var(--layout_-_display); --layout-horizontal_-_-ms-flex-direction:  row; --layout-horizontal_-_-webkit-flex-direction:  row; --layout-horizontal_-_flex-direction:  row;;
+
+      --layout-horizontal-reverse_-_display:  var(--layout_-_display); --layout-horizontal-reverse_-_-ms-flex-direction:  row-reverse; --layout-horizontal-reverse_-_-webkit-flex-direction:  row-reverse; --layout-horizontal-reverse_-_flex-direction:  row-reverse;;
+
+      --layout-vertical_-_display:  var(--layout_-_display); --layout-vertical_-_-ms-flex-direction:  column; --layout-vertical_-_-webkit-flex-direction:  column; --layout-vertical_-_flex-direction:  column;;
+
+      --layout-vertical-reverse_-_display:  var(--layout_-_display); --layout-vertical-reverse_-_-ms-flex-direction:  column-reverse; --layout-vertical-reverse_-_-webkit-flex-direction:  column-reverse; --layout-vertical-reverse_-_flex-direction:  column-reverse;;
+
+      --layout-wrap_-_-ms-flex-wrap:  wrap; --layout-wrap_-_-webkit-flex-wrap:  wrap; --layout-wrap_-_flex-wrap:  wrap;;
+
+      --layout-wrap-reverse_-_-ms-flex-wrap:  wrap-reverse; --layout-wrap-reverse_-_-webkit-flex-wrap:  wrap-reverse; --layout-wrap-reverse_-_flex-wrap:  wrap-reverse;;
+
+      --layout-flex-auto_-_-ms-flex:  1 1 auto; --layout-flex-auto_-_-webkit-flex:  1 1 auto; --layout-flex-auto_-_flex:  1 1 auto;;
+
+      --layout-flex-none_-_-ms-flex:  none; --layout-flex-none_-_-webkit-flex:  none; --layout-flex-none_-_flex:  none;;
+
+      --layout-flex_-_-ms-flex:  1 1 0.000000001px; --layout-flex_-_-webkit-flex:  1; --layout-flex_-_flex:  1; --layout-flex_-_-webkit-flex-basis:  0.000000001px; --layout-flex_-_flex-basis:  0.000000001px;;
+
+      --layout-flex-2_-_-ms-flex:  2; --layout-flex-2_-_-webkit-flex:  2; --layout-flex-2_-_flex:  2;;
+
+      --layout-flex-3_-_-ms-flex:  3; --layout-flex-3_-_-webkit-flex:  3; --layout-flex-3_-_flex:  3;;
+
+      --layout-flex-4_-_-ms-flex:  4; --layout-flex-4_-_-webkit-flex:  4; --layout-flex-4_-_flex:  4;;
+
+      --layout-flex-5_-_-ms-flex:  5; --layout-flex-5_-_-webkit-flex:  5; --layout-flex-5_-_flex:  5;;
+
+      --layout-flex-6_-_-ms-flex:  6; --layout-flex-6_-_-webkit-flex:  6; --layout-flex-6_-_flex:  6;;
+
+      --layout-flex-7_-_-ms-flex:  7; --layout-flex-7_-_-webkit-flex:  7; --layout-flex-7_-_flex:  7;;
+
+      --layout-flex-8_-_-ms-flex:  8; --layout-flex-8_-_-webkit-flex:  8; --layout-flex-8_-_flex:  8;;
+
+      --layout-flex-9_-_-ms-flex:  9; --layout-flex-9_-_-webkit-flex:  9; --layout-flex-9_-_flex:  9;;
+
+      --layout-flex-10_-_-ms-flex:  10; --layout-flex-10_-_-webkit-flex:  10; --layout-flex-10_-_flex:  10;;
+
+      --layout-flex-11_-_-ms-flex:  11; --layout-flex-11_-_-webkit-flex:  11; --layout-flex-11_-_flex:  11;;
+
+      --layout-flex-12_-_-ms-flex:  12; --layout-flex-12_-_-webkit-flex:  12; --layout-flex-12_-_flex:  12;;
+
+      
+
+      --layout-start_-_-ms-flex-align:  start; --layout-start_-_-webkit-align-items:  flex-start; --layout-start_-_align-items:  flex-start;;
+
+      --layout-center_-_-ms-flex-align:  center; --layout-center_-_-webkit-align-items:  center; --layout-center_-_align-items:  center;;
+
+      --layout-end_-_-ms-flex-align:  end; --layout-end_-_-webkit-align-items:  flex-end; --layout-end_-_align-items:  flex-end;;
+
+      --layout-baseline_-_-ms-flex-align:  baseline; --layout-baseline_-_-webkit-align-items:  baseline; --layout-baseline_-_align-items:  baseline;;
+
+      
+
+      --layout-start-justified_-_-ms-flex-pack:  start; --layout-start-justified_-_-webkit-justify-content:  flex-start; --layout-start-justified_-_justify-content:  flex-start;;
+
+      --layout-center-justified_-_-ms-flex-pack:  center; --layout-center-justified_-_-webkit-justify-content:  center; --layout-center-justified_-_justify-content:  center;;
+
+      --layout-end-justified_-_-ms-flex-pack:  end; --layout-end-justified_-_-webkit-justify-content:  flex-end; --layout-end-justified_-_justify-content:  flex-end;;
+
+      --layout-around-justified_-_-ms-flex-pack:  distribute; --layout-around-justified_-_-webkit-justify-content:  space-around; --layout-around-justified_-_justify-content:  space-around;;
+
+      --layout-justified_-_-ms-flex-pack:  justify; --layout-justified_-_-webkit-justify-content:  space-between; --layout-justified_-_justify-content:  space-between;;
+
+      --layout-center-center_-_-ms-flex-align:  var(--layout-center_-_-ms-flex-align); --layout-center-center_-_-webkit-align-items:  var(--layout-center_-_-webkit-align-items); --layout-center-center_-_align-items:  var(--layout-center_-_align-items); --layout-center-center_-_-ms-flex-pack:  var(--layout-center-justified_-_-ms-flex-pack); --layout-center-center_-_-webkit-justify-content:  var(--layout-center-justified_-_-webkit-justify-content); --layout-center-center_-_justify-content:  var(--layout-center-justified_-_justify-content);;
+
+      
+
+      --layout-self-start_-_-ms-align-self:  flex-start; --layout-self-start_-_-webkit-align-self:  flex-start; --layout-self-start_-_align-self:  flex-start;;
+
+      --layout-self-center_-_-ms-align-self:  center; --layout-self-center_-_-webkit-align-self:  center; --layout-self-center_-_align-self:  center;;
+
+      --layout-self-end_-_-ms-align-self:  flex-end; --layout-self-end_-_-webkit-align-self:  flex-end; --layout-self-end_-_align-self:  flex-end;;
+
+      --layout-self-stretch_-_-ms-align-self:  stretch; --layout-self-stretch_-_-webkit-align-self:  stretch; --layout-self-stretch_-_align-self:  stretch;;
+
+      --layout-self-baseline_-_-ms-align-self:  baseline; --layout-self-baseline_-_-webkit-align-self:  baseline; --layout-self-baseline_-_align-self:  baseline;;
+
+      
+
+      --layout-start-aligned_-_-ms-flex-line-pack:  start; --layout-start-aligned_-_-ms-align-content:  flex-start; --layout-start-aligned_-_-webkit-align-content:  flex-start; --layout-start-aligned_-_align-content:  flex-start;;
+
+      --layout-end-aligned_-_-ms-flex-line-pack:  end; --layout-end-aligned_-_-ms-align-content:  flex-end; --layout-end-aligned_-_-webkit-align-content:  flex-end; --layout-end-aligned_-_align-content:  flex-end;;
+
+      --layout-center-aligned_-_-ms-flex-line-pack:  center; --layout-center-aligned_-_-ms-align-content:  center; --layout-center-aligned_-_-webkit-align-content:  center; --layout-center-aligned_-_align-content:  center;;
+
+      --layout-between-aligned_-_-ms-flex-line-pack:  justify; --layout-between-aligned_-_-ms-align-content:  space-between; --layout-between-aligned_-_-webkit-align-content:  space-between; --layout-between-aligned_-_align-content:  space-between;;
+
+      --layout-around-aligned_-_-ms-flex-line-pack:  distribute; --layout-around-aligned_-_-ms-align-content:  space-around; --layout-around-aligned_-_-webkit-align-content:  space-around; --layout-around-aligned_-_align-content:  space-around;;
+
+      
+
+      --layout-block_-_display:  block;;
+
+      --layout-invisible_-_visibility:  hidden !important;;
+
+      --layout-relative_-_position:  relative;;
+
+      --layout-fit_-_position:  absolute; --layout-fit_-_top:  0; --layout-fit_-_right:  0; --layout-fit_-_bottom:  0; --layout-fit_-_left:  0;;
+
+      --layout-scroll_-_-webkit-overflow-scrolling:  touch; --layout-scroll_-_overflow:  auto;;
+
+      --layout-fullbleed_-_margin:  0; --layout-fullbleed_-_height:  100vh;;
+
+      
+
+      --layout-fixed-top_-_position:  fixed; --layout-fixed-top_-_top:  0; --layout-fixed-top_-_left:  0; --layout-fixed-top_-_right:  0;;
+
+      --layout-fixed-right_-_position:  fixed; --layout-fixed-right_-_top:  0; --layout-fixed-right_-_right:  0; --layout-fixed-right_-_bottom:  0;;
+
+      --layout-fixed-bottom_-_position:  fixed; --layout-fixed-bottom_-_right:  0; --layout-fixed-bottom_-_bottom:  0; --layout-fixed-bottom_-_left:  0;;
+
+      --layout-fixed-left_-_position:  fixed; --layout-fixed-left_-_top:  0; --layout-fixed-left_-_bottom:  0; --layout-fixed-left_-_left:  0;;
+}
+
+</style>
+</custom-style><style>[hidden] { display: none !important; }</style><custom-style>
+  <style is="custom-style">html {
+  --google-red-100: #f4c7c3;
+      --google-red-300: #e67c73;
+      --google-red-500: #db4437;
+      --google-red-700: #c53929;
+
+      --google-blue-100: #c6dafc;
+      --google-blue-300: #7baaf7;
+      --google-blue-500: #4285f4;
+      --google-blue-700: #3367d6;
+
+      --google-green-100: #b7e1cd;
+      --google-green-300: #57bb8a;
+      --google-green-500: #0f9d58;
+      --google-green-700: #0b8043;
+
+      --google-yellow-100: #fce8b2;
+      --google-yellow-300: #f7cb4d;
+      --google-yellow-500: #f4b400;
+      --google-yellow-700: #f09300;
+
+      --google-grey-100: #f5f5f5;
+      --google-grey-300: #e0e0e0;
+      --google-grey-500: #9e9e9e;
+      --google-grey-700: #616161;
+
+      
+
+      --paper-red-50: #ffebee;
+      --paper-red-100: #ffcdd2;
+      --paper-red-200: #ef9a9a;
+      --paper-red-300: #e57373;
+      --paper-red-400: #ef5350;
+      --paper-red-500: #f44336;
+      --paper-red-600: #e53935;
+      --paper-red-700: #d32f2f;
+      --paper-red-800: #c62828;
+      --paper-red-900: #b71c1c;
+      --paper-red-a100: #ff8a80;
+      --paper-red-a200: #ff5252;
+      --paper-red-a400: #ff1744;
+      --paper-red-a700: #d50000;
+
+      --paper-pink-50: #fce4ec;
+      --paper-pink-100: #f8bbd0;
+      --paper-pink-200: #f48fb1;
+      --paper-pink-300: #f06292;
+      --paper-pink-400: #ec407a;
+      --paper-pink-500: #e91e63;
+      --paper-pink-600: #d81b60;
+      --paper-pink-700: #c2185b;
+      --paper-pink-800: #ad1457;
+      --paper-pink-900: #880e4f;
+      --paper-pink-a100: #ff80ab;
+      --paper-pink-a200: #ff4081;
+      --paper-pink-a400: #f50057;
+      --paper-pink-a700: #c51162;
+
+      --paper-purple-50: #f3e5f5;
+      --paper-purple-100: #e1bee7;
+      --paper-purple-200: #ce93d8;
+      --paper-purple-300: #ba68c8;
+      --paper-purple-400: #ab47bc;
+      --paper-purple-500: #9c27b0;
+      --paper-purple-600: #8e24aa;
+      --paper-purple-700: #7b1fa2;
+      --paper-purple-800: #6a1b9a;
+      --paper-purple-900: #4a148c;
+      --paper-purple-a100: #ea80fc;
+      --paper-purple-a200: #e040fb;
+      --paper-purple-a400: #d500f9;
+      --paper-purple-a700: #aa00ff;
+
+      --paper-deep-purple-50: #ede7f6;
+      --paper-deep-purple-100: #d1c4e9;
+      --paper-deep-purple-200: #b39ddb;
+      --paper-deep-purple-300: #9575cd;
+      --paper-deep-purple-400: #7e57c2;
+      --paper-deep-purple-500: #673ab7;
+      --paper-deep-purple-600: #5e35b1;
+      --paper-deep-purple-700: #512da8;
+      --paper-deep-purple-800: #4527a0;
+      --paper-deep-purple-900: #311b92;
+      --paper-deep-purple-a100: #b388ff;
+      --paper-deep-purple-a200: #7c4dff;
+      --paper-deep-purple-a400: #651fff;
+      --paper-deep-purple-a700: #6200ea;
+
+      --paper-indigo-50: #e8eaf6;
+      --paper-indigo-100: #c5cae9;
+      --paper-indigo-200: #9fa8da;
+      --paper-indigo-300: #7986cb;
+      --paper-indigo-400: #5c6bc0;
+      --paper-indigo-500: #3f51b5;
+      --paper-indigo-600: #3949ab;
+      --paper-indigo-700: #303f9f;
+      --paper-indigo-800: #283593;
+      --paper-indigo-900: #1a237e;
+      --paper-indigo-a100: #8c9eff;
+      --paper-indigo-a200: #536dfe;
+      --paper-indigo-a400: #3d5afe;
+      --paper-indigo-a700: #304ffe;
+
+      --paper-blue-50: #e3f2fd;
+      --paper-blue-100: #bbdefb;
+      --paper-blue-200: #90caf9;
+      --paper-blue-300: #64b5f6;
+      --paper-blue-400: #42a5f5;
+      --paper-blue-500: #2196f3;
+      --paper-blue-600: #1e88e5;
+      --paper-blue-700: #1976d2;
+      --paper-blue-800: #1565c0;
+      --paper-blue-900: #0d47a1;
+      --paper-blue-a100: #82b1ff;
+      --paper-blue-a200: #448aff;
+      --paper-blue-a400: #2979ff;
+      --paper-blue-a700: #2962ff;
+
+      --paper-light-blue-50: #e1f5fe;
+      --paper-light-blue-100: #b3e5fc;
+      --paper-light-blue-200: #81d4fa;
+      --paper-light-blue-300: #4fc3f7;
+      --paper-light-blue-400: #29b6f6;
+      --paper-light-blue-500: #03a9f4;
+      --paper-light-blue-600: #039be5;
+      --paper-light-blue-700: #0288d1;
+      --paper-light-blue-800: #0277bd;
+      --paper-light-blue-900: #01579b;
+      --paper-light-blue-a100: #80d8ff;
+      --paper-light-blue-a200: #40c4ff;
+      --paper-light-blue-a400: #00b0ff;
+      --paper-light-blue-a700: #0091ea;
+
+      --paper-cyan-50: #e0f7fa;
+      --paper-cyan-100: #b2ebf2;
+      --paper-cyan-200: #80deea;
+      --paper-cyan-300: #4dd0e1;
+      --paper-cyan-400: #26c6da;
+      --paper-cyan-500: #00bcd4;
+      --paper-cyan-600: #00acc1;
+      --paper-cyan-700: #0097a7;
+      --paper-cyan-800: #00838f;
+      --paper-cyan-900: #006064;
+      --paper-cyan-a100: #84ffff;
+      --paper-cyan-a200: #18ffff;
+      --paper-cyan-a400: #00e5ff;
+      --paper-cyan-a700: #00b8d4;
+
+      --paper-teal-50: #e0f2f1;
+      --paper-teal-100: #b2dfdb;
+      --paper-teal-200: #80cbc4;
+      --paper-teal-300: #4db6ac;
+      --paper-teal-400: #26a69a;
+      --paper-teal-500: #009688;
+      --paper-teal-600: #00897b;
+      --paper-teal-700: #00796b;
+      --paper-teal-800: #00695c;
+      --paper-teal-900: #004d40;
+      --paper-teal-a100: #a7ffeb;
+      --paper-teal-a200: #64ffda;
+      --paper-teal-a400: #1de9b6;
+      --paper-teal-a700: #00bfa5;
+
+      --paper-green-50: #e8f5e9;
+      --paper-green-100: #c8e6c9;
+      --paper-green-200: #a5d6a7;
+      --paper-green-300: #81c784;
+      --paper-green-400: #66bb6a;
+      --paper-green-500: #4caf50;
+      --paper-green-600: #43a047;
+      --paper-green-700: #388e3c;
+      --paper-green-800: #2e7d32;
+      --paper-green-900: #1b5e20;
+      --paper-green-a100: #b9f6ca;
+      --paper-green-a200: #69f0ae;
+      --paper-green-a400: #00e676;
+      --paper-green-a700: #00c853;
+
+      --paper-light-green-50: #f1f8e9;
+      --paper-light-green-100: #dcedc8;
+      --paper-light-green-200: #c5e1a5;
+      --paper-light-green-300: #aed581;
+      --paper-light-green-400: #9ccc65;
+      --paper-light-green-500: #8bc34a;
+      --paper-light-green-600: #7cb342;
+      --paper-light-green-700: #689f38;
+      --paper-light-green-800: #558b2f;
+      --paper-light-green-900: #33691e;
+      --paper-light-green-a100: #ccff90;
+      --paper-light-green-a200: #b2ff59;
+      --paper-light-green-a400: #76ff03;
+      --paper-light-green-a700: #64dd17;
+
+      --paper-lime-50: #f9fbe7;
+      --paper-lime-100: #f0f4c3;
+      --paper-lime-200: #e6ee9c;
+      --paper-lime-300: #dce775;
+      --paper-lime-400: #d4e157;
+      --paper-lime-500: #cddc39;
+      --paper-lime-600: #c0ca33;
+      --paper-lime-700: #afb42b;
+      --paper-lime-800: #9e9d24;
+      --paper-lime-900: #827717;
+      --paper-lime-a100: #f4ff81;
+      --paper-lime-a200: #eeff41;
+      --paper-lime-a400: #c6ff00;
+      --paper-lime-a700: #aeea00;
+
+      --paper-yellow-50: #fffde7;
+      --paper-yellow-100: #fff9c4;
+      --paper-yellow-200: #fff59d;
+      --paper-yellow-300: #fff176;
+      --paper-yellow-400: #ffee58;
+      --paper-yellow-500: #ffeb3b;
+      --paper-yellow-600: #fdd835;
+      --paper-yellow-700: #fbc02d;
+      --paper-yellow-800: #f9a825;
+      --paper-yellow-900: #f57f17;
+      --paper-yellow-a100: #ffff8d;
+      --paper-yellow-a200: #ffff00;
+      --paper-yellow-a400: #ffea00;
+      --paper-yellow-a700: #ffd600;
+
+      --paper-amber-50: #fff8e1;
+      --paper-amber-100: #ffecb3;
+      --paper-amber-200: #ffe082;
+      --paper-amber-300: #ffd54f;
+      --paper-amber-400: #ffca28;
+      --paper-amber-500: #ffc107;
+      --paper-amber-600: #ffb300;
+      --paper-amber-700: #ffa000;
+      --paper-amber-800: #ff8f00;
+      --paper-amber-900: #ff6f00;
+      --paper-amber-a100: #ffe57f;
+      --paper-amber-a200: #ffd740;
+      --paper-amber-a400: #ffc400;
+      --paper-amber-a700: #ffab00;
+
+      --paper-orange-50: #fff3e0;
+      --paper-orange-100: #ffe0b2;
+      --paper-orange-200: #ffcc80;
+      --paper-orange-300: #ffb74d;
+      --paper-orange-400: #ffa726;
+      --paper-orange-500: #ff9800;
+      --paper-orange-600: #fb8c00;
+      --paper-orange-700: #f57c00;
+      --paper-orange-800: #ef6c00;
+      --paper-orange-900: #e65100;
+      --paper-orange-a100: #ffd180;
+      --paper-orange-a200: #ffab40;
+      --paper-orange-a400: #ff9100;
+      --paper-orange-a700: #ff6500;
+
+      --paper-deep-orange-50: #fbe9e7;
+      --paper-deep-orange-100: #ffccbc;
+      --paper-deep-orange-200: #ffab91;
+      --paper-deep-orange-300: #ff8a65;
+      --paper-deep-orange-400: #ff7043;
+      --paper-deep-orange-500: #ff5722;
+      --paper-deep-orange-600: #f4511e;
+      --paper-deep-orange-700: #e64a19;
+      --paper-deep-orange-800: #d84315;
+      --paper-deep-orange-900: #bf360c;
+      --paper-deep-orange-a100: #ff9e80;
+      --paper-deep-orange-a200: #ff6e40;
+      --paper-deep-orange-a400: #ff3d00;
+      --paper-deep-orange-a700: #dd2c00;
+
+      --paper-brown-50: #efebe9;
+      --paper-brown-100: #d7ccc8;
+      --paper-brown-200: #bcaaa4;
+      --paper-brown-300: #a1887f;
+      --paper-brown-400: #8d6e63;
+      --paper-brown-500: #795548;
+      --paper-brown-600: #6d4c41;
+      --paper-brown-700: #5d4037;
+      --paper-brown-800: #4e342e;
+      --paper-brown-900: #3e2723;
+
+      --paper-grey-50: #fafafa;
+      --paper-grey-100: #f5f5f5;
+      --paper-grey-200: #eeeeee;
+      --paper-grey-300: #e0e0e0;
+      --paper-grey-400: #bdbdbd;
+      --paper-grey-500: #9e9e9e;
+      --paper-grey-600: #757575;
+      --paper-grey-700: #616161;
+      --paper-grey-800: #424242;
+      --paper-grey-900: #212121;
+
+      --paper-blue-grey-50: #eceff1;
+      --paper-blue-grey-100: #cfd8dc;
+      --paper-blue-grey-200: #b0bec5;
+      --paper-blue-grey-300: #90a4ae;
+      --paper-blue-grey-400: #78909c;
+      --paper-blue-grey-500: #607d8b;
+      --paper-blue-grey-600: #546e7a;
+      --paper-blue-grey-700: #455a64;
+      --paper-blue-grey-800: #37474f;
+      --paper-blue-grey-900: #263238;
+
+      
+      --dark-divider-opacity: 0.12;
+      --dark-disabled-opacity: 0.38; 
+      --dark-secondary-opacity: 0.54;
+      --dark-primary-opacity: 0.87;
+
+      
+      --light-divider-opacity: 0.12;
+      --light-disabled-opacity: 0.3; 
+      --light-secondary-opacity: 0.7;
+      --light-primary-opacity: 1.0;
+}
+
+</style>
+</custom-style><custom-style>
+  <style is="custom-style">html {
+  --primary-text-color: var(--light-theme-text-color);
+      --primary-background-color: var(--light-theme-background-color);
+      --secondary-text-color: var(--light-theme-secondary-color);
+      --disabled-text-color: var(--light-theme-disabled-color);
+      --divider-color: var(--light-theme-divider-color);
+      --error-color: var(--paper-deep-orange-a700);
+
+      
+      --primary-color: var(--paper-indigo-500);
+      --light-primary-color: var(--paper-indigo-100);
+      --dark-primary-color: var(--paper-indigo-700);
+
+      --accent-color: var(--paper-pink-a200);
+      --light-accent-color: var(--paper-pink-a100);
+      --dark-accent-color: var(--paper-pink-a400);
+
+
+      
+      --light-theme-background-color: #ffffff;
+      --light-theme-base-color: #000000;
+      --light-theme-text-color: var(--paper-grey-900);
+      --light-theme-secondary-color: #737373;  
+      --light-theme-disabled-color: #9b9b9b;  
+      --light-theme-divider-color: #dbdbdb;
+
+      
+      --dark-theme-background-color: var(--paper-grey-900);
+      --dark-theme-base-color: #ffffff;
+      --dark-theme-text-color: #ffffff;
+      --dark-theme-secondary-color: #bcbcbc;  
+      --dark-theme-disabled-color: #646464;  
+      --dark-theme-divider-color: #3c3c3c;
+
+      
+      --text-primary-color: var(--dark-theme-text-color);
+      --default-primary-color: var(--primary-color);
+}
+
+</style>
+</custom-style><script async="" src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/lazy.min.js"></script>
+<script src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/iframe_api"></script>
+<script src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/vendor-45d462772c30000424907184f70c7157e95fb6227698d1671c5051818a6f60d8.js"></script>
+<script src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/application-5daeb76d4b3b91bbb5f3f389267d0202876cf7e7c20aba06806c9fc52aec1b96.js"></script>
+</head>
+<body class="focuses focuses-show lab-show l-full no-nav">
+<div class="header-container">
+<div class="header">
+<a class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect header__button header__button--nav header__nav-panel-button js-nav-toggle" data-upgraded=",MaterialButton,MaterialRipple">
+<i class="material-icons">menu</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<div class="header__title">
+<a class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button header__button--nav" href="https://in-globalknowledge-jp.qwiklabs.com/classrooms/2201" data-upgraded=",MaterialButton,MaterialRipple"><ql-icon>arrow_back</ql-icon><span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+
+<h1 class="headline-5">
+Architecting on AWS - Lab 2 - Deploying a Web Application on AWS
+</h1>
+</div>
+<div class="header__actions">
+<a class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" id="toggle-lab-control-panel" href="javascript:;" data-upgraded=",MaterialButton,MaterialRipple" tabindex="0"><i class="material-icons">description</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a><div class="mdl-tooltip js-tooltip" data-mdl-for="toggle-lab-control-panel" data-upgraded=",MaterialTooltip">
+Toggle Lab Panel
+</div>
+
+<ql-help context="lab" productdata="{&quot;userId&quot;:10038}" data-analytics-action="opened_help" data-analytics-label="lab"></ql-help>
+<a class="header-my-account-button mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect js-my-account-button" data-upgraded=",MaterialButton,MaterialRipple">
+<img class="avatar " alt="avatar image" src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/f0dab6b37c2175b2d2cf458bd89781dc.png">
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<div class="header-my-account-menu js-my-account-menu">
+<div class="card elevation-2 no-padding">
+<div class="my-account-menu__top">
+<img class="avatar " alt="avatar image" src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/f0dab6b37c2175b2d2cf458bd89781dc.png">
+<div class="my-account-menu__info">
+<h4 class="subtitle-headline-1">
+Rajesh Kajam
+</h4>
+<p class="body-2 text--gray">
+<span>rajkajam@in.ibm.com</span>
+</p>
+<a class="button" href="https://in-globalknowledge-jp.qwiklabs.com/my_account/profile">My Account</a>
+</div>
+</div>
+<div class="my-account-menu__bottom">
+<a data-analytics-action="clicked_sign_out" class="button button--hairline" rel="nofollow" data-method="delete" href="https://in-globalknowledge-jp.qwiklabs.com/users/sign_out">Sign Out</a>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<nav class="nav-bar">
+<a class="nav-bar__item js-navigation-button" href="https://in-globalknowledge-jp.qwiklabs.com/"><ql-icon class="nav-bar__item__icon">
+home
+</ql-icon>
+<span class="nav-bar__item__label">
+Home
+</span>
+</a>
+<a class="nav-bar__item js-navigation-button" href="https://in-globalknowledge-jp.qwiklabs.com/catalog"><ql-icon class="nav-bar__item__icon">
+school
+</ql-icon>
+<span class="nav-bar__item__label">
+Catalog
+</span>
+</a>
+<a class="nav-bar__item js-navigation-button  active" aria-current="page" href="https://in-globalknowledge-jp.qwiklabs.com/my_learning"><ql-icon class="nav-bar__item__icon">
+event_note
+</ql-icon>
+<span class="nav-bar__item__label">
+My Learning
+</span>
+</a>
+</nav>
+
+<nav class="nav-panel js-nav-panel">
+<div class="nav-panel__logo">
+<div class="custom-logo"><img src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/TRAINOCATE_LOGO_WHITE_448x91.png"></div>
+</div>
+<a title="Home" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://in-globalknowledge-jp.qwiklabs.com/"><ql-icon class="nav-panel__item__icon">
+home
+</ql-icon>
+<div class="nav-panel__item__label">
+Home
+</div>
+</a>
+<a title="Catalog" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://in-globalknowledge-jp.qwiklabs.com/catalog"><ql-icon class="nav-panel__item__icon">
+school
+</ql-icon>
+<div class="nav-panel__item__label">
+Catalog
+</div>
+</a>
+<a title="My Learning" tabindex="-1" class="nav-panel__item js-navigation-button active" aria-current="page" href="https://in-globalknowledge-jp.qwiklabs.com/my_learning"><ql-icon class="nav-panel__item__icon">
+event_note
+</ql-icon>
+<div class="nav-panel__item__label">
+My Learning
+</div>
+</a>
+<div class="nav-panel__spacer"></div>
+<a title="Profile" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://in-globalknowledge-jp.qwiklabs.com/my_account/profile"><ql-icon class="nav-panel__item__icon">
+account_circle
+</ql-icon>
+<div class="nav-panel__item__label">
+Profile
+</div>
+</a>
+<a title="Credits &amp; Subscriptions" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://in-globalknowledge-jp.qwiklabs.com/my_account/credits"><ql-icon class="nav-panel__item__icon">
+money
+</ql-icon>
+<div class="nav-panel__item__label">
+Credits &amp; Subscriptions
+</div>
+</a>
+<a title="Security" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://in-globalknowledge-jp.qwiklabs.com/my_account/security"><ql-icon class="nav-panel__item__icon">
+security
+</ql-icon>
+<div class="nav-panel__item__label">
+Security
+</div>
+</a>
+<div class="nav-panel__spacer"></div>
+<a class="nav-panel__item" tabindex="-1" href="https://in-globalknowledge-jp.qwiklabs.com/classrooms/2201/labs/10526#"><ql-help>
+<div class="nav-panel__help-item">
+<ql-icon class="nav-panel__item__icon">help</ql-icon>
+<div class="nav-panel__item__label">Help</div>
+</div>
+</ql-help>
+</a><div class="nav-panel__small-links">
+<a tabindex="-1" href="https://in-globalknowledge-jp.qwiklabs.com/privacy_policy">Privacy</a>
+<a tabindex="-1" href="https://in-globalknowledge-jp.qwiklabs.com/terms_of_service">Terms</a>
+</div>
+</nav>
+<div class="nav-panel__overlay js-nav-toggle"></div>
+
+<main class="js-main">
+<span class="hidden" id="flash-sibling-before"></span>
+
+<div class="l-main-wrapper" id="main-wrapper">
+
+
+
+
+
+
+
+<div class="js-lab-state" data-analytics-payload="{&quot;label&quot;:&quot;Architecting on AWS - Lab 2 - Deploying a Web Application on AWS&quot;,&quot;lab_name&quot;:&quot;Architecting on AWS - Lab 2 - Deploying a Web Application on AWS&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;in-globalknowledge-jp&quot;}" data-focus-id="10526" data-lab-billing-limit="0.0" data-lab-duration="7200" data-parent="classroom"></div>
+<ql-lab-control-panel class="js-lab-control-panel l-lab-control-panel" connectiondetails="[]" connectionfiles="[]" labcontrolbutton="{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}" labtimer="{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:7200}" studentresources="[]"></ql-lab-control-panel>
+<div class="l-lab-main-body">
+<ql-cloud-terminal></ql-cloud-terminal>
+<div class="js-lab-content lab-content">
+<div class="alert alert--fake js-alert">
+<p class="alert__message js-alert-message"></p>
+<a class="alert__close js-alert-close">
+<i class="fa fa-times"></i>
+</a>
+<iframe class="l-ie-iframe-fix" src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/saved_resource.html"></iframe>
+</div>
+<div class="lab-content__markdown-wrapper">
+<div class="lab-preamble">
+<h1 class="lab-preamble__title">
+Architecting on AWS - Lab 2 - Deploying a Web Application on AWS
+</h1>
+<div class="lab-preamble__details subtitle-headline-1">
+<span>2 hours </span>
+<span>Free</span>
+<div class="lab__rating">
+<a href="https://in-globalknowledge-jp.qwiklabs.com/focuses/10526/reviews?parent=catalog"><div class="rateit" data-rateit-readonly="true" data-rateit-value="4.3667"><div class="rateit-reset" style="display: none;"></div><div class="rateit-range" style="width: 80px; height: 16px;"><div class="rateit-selected" style="height: 16px; width: 69.8672px;"></div><div class="rateit-hover" style="height:16px"></div></div></div>
+
+</a><a data-target="#lab-review-modal" data-toggle="modal">
+Rate Lab
+</a>
+</div>
+</div>
+</div>
+
+<div class="lab-content__inner-wrapper">
+<div class="js-markdown-instructions lab-content__markdown markdown-lab-instructions no-select" id="markdown-lab-instructions">
+<p><img src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/aws-logo.png" alt=""></p>
+
+
+
+<p>© 2020 Amazon Web Services, Inc. and its affiliates. All rights reserved. This work may not be reproduced or redistributed, in whole or in part, without prior written permission from Amazon Web Services, Inc. Commercial copying, lending, or selling is prohibited.</p>
+
+<p>Errors, corrections or other questions? Contact us at <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification</em></a>.</p>
+
+<h2 id="step1">Lab overview</h2>
+
+<p><span style="color:red;"><i class="fas fa-exclamation-triangle"></i> <strong>Windows users</strong></span> Use Google Chrome or Mozilla Firefox as your web browser for this lab. The lab instructions are <strong>not compatible with Microsoft Internet Explorer</strong> because of a difference in the Amazon Relational Database (Amazon RDS) console.</p>
+
+<p>Traditional methods of deploying web servers and configuring security are complex and often involve multiple teams and long delays. Fortunately, it is quick and easy to deploy secure infrastructure in the AWS Cloud.</p>
+
+<p>In this lab, you configure security groups, create an Amazon Relational Database Service (Amazon RDS) database, launch a web application server with Amazon Elastic Compute Cloud (Amazon EC2), and test a web application. The following image shows the final architecture:</p>
+
+<p><img src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/architecture.png" alt="Architecture"></p>
+
+<p><strong>Objectives</strong></p>
+
+<p>After completing this lab, you will be able to:</p>
+<ul>
+<li>Launch a database using Amazon RDS</li>
+<li>Launch an application server using Amazon EC2</li>
+<li>Automatically install an application on an EC2 instance</li>
+</ul>
+<p><strong>Duration</strong></p>
+
+<p>This lab requires approximately <strong>30 minutes</strong> to complete.</p>
+
+
+
+<h2 id="step2">Start Lab</h2>
+<ol start="1">
+<li>At the top of your screen, launch your lab by clicking <span style="background-color:#34A853;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#34A853;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Start Lab</span>
+</li>
+</ol>
+<p>This will start the process of provisioning your lab resources. An estimated amount of time to provision your lab resources will be displayed. You must wait for your resources to be provisioned before continuing.</p>
+
+<p><i class="fas fa-info-circle"></i> If you are prompted for a token, use the one distributed to you (or credits you have purchased). </p>
+<ol start="2">
+<li><p>Open your lab by clicking <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span><br>
+This will open an AWS Management Console sign-in page.</p></li>
+<li><p>On the Sign-in page, configure:</p></li>
+</ol><ul>
+<li>
+<strong>IAM user name:</strong> <input readonly="" class="copyable-inline-input" size="10" type="text" value="awsstudent">
+</li>
+<li>
+<strong>Password:</strong> Paste the value of <strong>Password</strong> located to the left of these instructions.</li>
+<li>Click <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Sign In</span>
+</li>
+</ul>
+<p><i class="fas fa-exclamation-triangle"></i> <strong>Please do not change the Region unless instructed</strong>.</p>
+
+
+
+<h3>Common login errors</h3>
+
+<p><strong>Error: You must first log out</strong></p>
+
+<p><img src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/logouterror.png" alt=""></p>
+
+<p>If you see the message, <strong>You must first log out before logging into a different AWS account:</strong> </p>
+<ul>
+<li>Click <strong>click here</strong>
+</li>
+<li>Close your browser tab to return to your initial Qwiklabs window</li>
+<li>Click <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span> again</li>
+</ul>
+
+
+<h2 id="step3">Task 1: Configuring security</h2>
+
+<p>You should implement security at every layer of your architecture—in the application, on the server, within the network, and when connecting to the internet.</p>
+
+<p>In this task, you define security groups for the Amazon EC2 application server and Amazon RDS database instance. The following diagram shows these security groups and how traffic will flow:</p>
+
+<p><img src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/security.png" alt="Security"></p>
+
+<p>A <em>security group</em> acts as a virtual firewall that controls the traffic for one or more instances. When you launch an instance, you associate one or more security groups with the instance. You add <em>rules</em> to each security group, and these rules allow traffic to or from the group's associated instances. You can modify the rules for a security group at any time; the new rules are automatically applied to all instances that are associated with the security group.</p>
+
+<p>First, create the App Security Group and configure it to permit incoming HTTP connections from the internet.</p>
+<ol start="4">
+<li><p>In the AWS Management Console, on the <span style="background-color:#232f3e;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">Services <i class="fas fa-angle-down"></i></span> menu, click <strong>EC2</strong>.</p></li>
+<li><p>In the left navigation pane, click <strong>Security Groups</strong>.</p></li>
+</ol>
+<p>A couple existing security groups are listed. You will create a new security group for the App Server.</p>
+<ol start="6">
+<li><p>Click <span style="background-color:#ec7211;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Create security group</span></p></li>
+<li><p>For <strong>Basic details</strong>, configure:</p></li>
+</ol><ul>
+<li>
+<strong>Security group name:</strong> <input readonly="" class="copyable-inline-input" size="6" type="text" value="App-SG">
+</li>
+<li>
+<strong>Description:</strong> <input readonly="" class="copyable-inline-input" size="17" type="text" value="Allow HTTP access">
+</li>
+<li>
+<strong>VPC:</strong> <em>Lab VPC</em>
+</li>
+</ul><ol start="8">
+<li>For <strong>Inbound rules</strong>, click <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Add rule</span> then configure:</li>
+</ol><ul>
+<li>
+<strong>Type:</strong> <em>HTTP</em>
+</li>
+<li>
+<strong>Source:</strong> <em>Anywhere</em>
+</li>
+</ul><ol start="9">
+<li>At the bottom of the page, click <span style="background-color:#ec7211;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Create security group</span>
+</li>
+</ol>
+<p>The security group is created. You will use this security group later in the lab when launching the App Server.</p>
+
+<p>Next, configure the Database Security Group and configure it to permit incoming database connections from the App Server.</p>
+
+<p>First, you need the ID of the security group that you just created.</p>
+<ol start="10">
+<li>From the <strong>Details</strong> page of your newly created security group, copy the <strong>Security group ID</strong>. Save the ID in a text file or other location to use later.</li>
+</ol>
+<p><i class="fas fa-comment"></i> <strong>Tip</strong> To copy the ID, hover on it and click the copy <i class="far fa-copy"></i> icon.</p>
+
+<p>The ID looks similar to: <em>sg-1234abcd</em></p>
+<ol start="11">
+<li><p>In the left navigation pane, click <strong>Security Groups</strong>.</p></li>
+<li><p>Click <span style="background-color:#ec7211;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Create security group</span></p></li>
+<li><p>For <strong>Basic details</strong>, configure:</p></li>
+</ol><ul>
+<li>
+<strong>Security group name:</strong> <input readonly="" class="copyable-inline-input" size="5" type="text" value="DB-SG">
+</li>
+<li>
+<strong>Description:</strong> <input readonly="" class="copyable-inline-input" size="15" type="text" value="Allow DB access">
+</li>
+<li>
+<strong>VPC:</strong> <em>Lab VPC</em>
+</li>
+</ul><ol start="14">
+<li>For <strong>Inbound rules</strong>, click <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Add rule</span> then configure:</li>
+</ol><ul>
+<li>
+<strong>Type:</strong> <em>MYSQL/Aurora</em>
+</li>
+<li>
+<strong>Source:</strong> Paste the security group ID that you copied previously, and select <em>App-SG</em>
+</li>
+</ul><ol start="15">
+<li>At the bottom of the page, click <span style="background-color:#ec7211;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Create security group</span>
+</li>
+</ol>
+<p>This configuration means that the Database Security Group (DB-SG) is permitting inbound access from the Application Security Group (App-SG), as shown in the following diagram:</p>
+
+<p><img src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/security.png" alt="Security"></p>
+
+<p>When you created the inbound rule for the Database Security Group, notice that you used the Application Security Group ID as the source. The ability for one security group to refer to another security group is a powerful capability. It means that you can grant additional EC2 instances to have access to the database by associating them with the Application Security Group. Any instance associated with the Application Security Group will then be permitted to communicate to the database (more accurately, to any database associated with the Database Security Group).</p>
+
+<p>You will use the new Database Security Group in the next task.</p>
+
+
+
+<h2 id="step4">Task 2: Creating an Amazon RDS database</h2>
+
+<p>Traditionally, creating a database can be a complex process, requiring either a database administrator or systems administrator. In the AWS Cloud, using the Amazon Relational Database Service (Amazon RDS) helps to simplify this process.</p>
+
+<p>In this task, you create a MySQL database in your virtual private cloud (VPC). MySQL is a popular open-source relational database management system (RDBMS) with no software licensing fees.</p>
+
+<p><span style="color:red;"><i class="fas fa-exclamation-triangle"></i> <strong>Windows users</strong></span> Use Google Chrome or Mozilla Firefox as your web browser for this lab. The lab instructions are <strong>not compatible with Microsoft Internet Explorer</strong> because of a difference in the Amazon Relational Database (Amazon RDS) console.</p>
+<ol start="16">
+<li><p>In the AWS Management Console, on the <span style="background-color:#232f3e;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">Services <i class="fas fa-angle-down"></i></span> menu, click <strong>RDS</strong>.</p></li>
+<li><p>Click <span style="background-color:#ec7211;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Create database</span></p></li>
+</ol>
+<p><i class="fas fa-exclamation-triangle"></i> <strong>Note</strong> If a banner displays with a <strong>Switch to the new database creation flow</strong> link, click the link to switch to that workflow.</p>
+<ol start="18">
+<li><p>For <strong>Engine options</strong>, select <i class="far fa-dot-circle"></i> <strong>MySQL</strong>.</p></li>
+<li><p>For <strong>Templates</strong>, select <i class="far fa-dot-circle"></i> <strong>Dev/Test</strong>.</p></li>
+</ol>
+<p>You can now configure database settings, such as credentials, instance size, and storage type and amount. The <strong>Multi-AZ deployment</strong> option creates a standby instance in a different Availability Zone to provide availability and durability. In this lab, you will use a single database instance.</p>
+<ol start="20">
+<li>For <strong>Settings</strong>, configure:</li>
+</ol><ul>
+<li>
+<strong>DB instance identifier:</strong> <input readonly="" class="copyable-inline-input" size="12" type="text" value="inventory-db">
+</li>
+<li>
+<strong>Master username:</strong> <input readonly="" class="copyable-inline-input" size="6" type="text" value="master">
+</li>
+<li>
+<strong>Master password:</strong> <input readonly="" class="copyable-inline-input" size="12" type="text" value="lab-password">
+</li>
+<li>
+<strong>Confirm password:</strong> <input readonly="" class="copyable-inline-input" size="12" type="text" value="lab-password">
+</li>
+</ul><ol start="21">
+<li>For <strong>DB instance size</strong>, configure:</li>
+</ol><ul>
+<li>Select <i class="far fa-dot-circle"></i> <strong>Burstable classes (includes t classes)</strong>
+</li>
+<li>Select <em>db.t2.micro</em>
+</li>
+</ul><ol start="22">
+<li>For <strong>Connectivity</strong>, configure:</li>
+</ol><ul>
+<li>
+<strong>Virtual private cloud (VPC):</strong> <em>Lab VPC</em>
+</li>
+</ul><ol start="23">
+<li>Expand <i class="fas fa-caret-right"></i> <strong>Additional connectivity configuration</strong>, then configure:</li>
+</ol><ul>
+<li>
+<strong>Existing VPC security groups:</strong> Click the dropdown menu. Select <strong>DB-SG</strong> to highlight it in blue and click <strong>default</strong> to remove the default security group.</li>
+</ul><ol start="24">
+<li>Expand <i class="fas fa-caret-right"></i> <strong>Additional configuration</strong>, then configure:</li>
+</ol><ul>
+<li>
+<strong>Initial database name:</strong> <input readonly="" class="copyable-inline-input" size="9" type="text" value="inventory">
+</li>
+<li>Uncheck <strong>Enable Enhanced monitoring</strong>
+</li>
+</ul>
+<p><i class="fas fa-exclamation-triangle"></i> <strong>Note</strong> The <strong>initial database name</strong> is the logical name of the database, which the application will use.</p>
+
+<p><i class="fas fa-comment"></i> <strong>Tip</strong> Feel free to look at the other options displayed on the page, but leave them set to their default values. Options include automatic backups, the ability to export log files, and automatic version upgrades. The ability to activate such features by clicking a box shows the power of using a fully managed database solution rather than having to install, back up, and maintain the database yourself.</p>
+<ol start="25">
+<li>At the bottom of the page, click <span style="background-color:#ec7211;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Create database</span>
+</li>
+</ol>
+<p><i class="fas fa-exclamation-triangle"></i> <strong>Note</strong> If you receive an error message that mentions <strong>rds-monitoring-role</strong>, confirm that you have unchecked <strong>Enable Enhanced monitoring</strong> in the <strong>Additional configuration</strong> section. Then, try again.</p>
+
+<p>A message displays to indicate that your database is being created. This takes a few minutes, but you can continue to the next task. You do not need to wait until the database is created.</p>
+
+
+
+<h2 id="step5">Task 3: Launching an application server using Amazon EC2</h2>
+
+<p>You are now ready to launch an Amazon Elastic Compute Cloud (Amazon EC2) instance to run the application. As part of the launch, you will provide a <em>configuration script</em>, which will automatically install an application. You will also associate the instance with the App Security Group that you created earlier in the lab. This will permit HTTP (web) access from the internet.</p>
+<ol start="26">
+<li><p>In the AWS Management Console, on the <span style="background-color:#232f3e;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">Services <i class="fas fa-angle-down"></i></span> menu, click <strong>EC2</strong>.</p></li>
+<li><p>Scroll down to the <strong>Launch instance</strong> section.</p></li>
+<li><p>Click <span style="background-color:#ec7211;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Launch instance</span> and select <em>Launch instance</em>.</p></li>
+</ol>
+<h3>Step 1: Choose AMI</h3>
+
+<p>Now choose an <em>Amazon Machine Image (AMI)</em>, which contains a copy of the disk volume that will be used to launch the instance.</p>
+
+<p><i class="fas fa-comment"></i> <strong>Note</strong> Examine the list of displayed AMIs, which includes multiple versions of Microsoft Windows and Linux. These disk images are regularly updated to incorporate security patches and software that helps you use AWS services. You can also create your own AMI that includes your own data and applications, or you can select pre-built commercial applications from the AWS Marketplace.</p>
+
+<p>For this lab, the application will use the Amazon Linux 2 AMI.</p>
+<ol start="29">
+<li>For the <strong>Amazon Linux 2 AMI</strong>, click <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Select</span>
+</li>
+</ol>
+<h3>Step 2: Choose instance type</h3>
+
+<p>Now choose an <em>instance type</em>, which determines the resources that are allocated to your EC2 instance. Each instance type allocates a combination of virtual CPUs, memory, disk storage, and network performance.</p>
+
+<p>Instance types are divided into <em>families</em> such as Compute Optimized, Memory Optimized, and Storage Optimized. The instance type name includes a family identifier, such as <strong>t2</strong> or <strong>m4</strong>. The number indicates the <em>generation</em> of the instance, so <strong>m5</strong> is newer than <strong>m4</strong>.</p>
+
+<p>Your application will use a <strong>t2.micro</strong> instance type, which is a small instance that can burst above baseline performance when it is busy. It is ideal for development, testing, and applications that have bursty workloads.</p>
+<ol start="30">
+<li><p>Select the <i class="far fa-check-square"></i> <strong>t2.micro</strong> instance type</p></li>
+<li><p>Click <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Next: Configure Instance Details</span></p></li>
+</ol>
+<h3>Step 3: Configure instance</h3>
+
+<p>Now configure instance details, such as the number of instances to launch and the network configuration. To view a description of each field, hover on the information <i class="fas fa-info-circle"></i> icons.</p>
+
+<p>You will launch the instance in a public subnet within the Lab VPC network.</p>
+<ol start="32">
+<li>Configure these settings:</li>
+</ol><ul>
+<li>
+<strong>Network:</strong> <em>Lab VPC</em>
+</li>
+<li>
+<strong>Subnet:</strong> <em>Public Subnet 1</em> (<strong>Note</strong> Ensure it is <strong>Public</strong>, not <strong>Private</strong>.)</li>
+<li>
+<strong>IAM role:</strong> <em>Inventory-App-Role</em>
+</li>
+</ul>
+<p><em>Inventory-App-Role</em> has the following policy attached, which grants permissions to applications running on the instance to make requests to AWS services:</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"Action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ssm:*"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:ssm:*:*:parameter/inventory-app/*"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code><button class="button button--copy js-copy-button-0"><i class="fa fa-clipboard"></i></button></pre>
+<p>In this case, the role grants permission to access the <strong>inventory-app</strong> settings within the AWS Systems Manager Parameter Store, which will be used to store configuration settings.</p>
+<ol start="33">
+<li>Scroll down to and expand the <i class="fas fa-caret-right"></i> <strong>Advanced Details</strong> section.</li>
+</ol>
+<p>A field for <strong>User data</strong> appears.</p>
+
+<p><i class="fas fa-info-circle"></i> <strong>Note</strong> When you launch an instance, you can pass a configuration script via the <strong>User data</strong> field. The script can be used to perform configuration tasks and install software.</p>
+
+<p>Your instance is running Amazon Linux, so you will provide a <em>shell script</em> that will run when the instance starts.</p>
+<ol start="34">
+<li>Copy and paste the following script into the <strong>User data</strong> field:</li>
+</ol><pre class="highlight plaintext"><code>#!/bin/bash
+# Install Apache Web Server and PHP
+yum install -y httpd mysql
+amazon-linux-extras install -y php7.2
+# Download Lab files
+wget https://us-west-2-tcprod.s3.amazonaws.com/courses/ILT-TF-200-ARCHIT/v6.8.2/lab-2-webapp/scripts/inventory-app.zip
+unzip inventory-app.zip -d /var/www/html/
+# Download and install the AWS SDK for PHP
+wget https://github.com/aws/aws-sdk-php/releases/download/3.62.3/aws.zip
+unzip aws -d /var/www/html
+# Turn on web server
+chkconfig httpd on
+service httpd start
+</code><button class="button button--copy js-copy-button-1"><i class="fa fa-clipboard"></i></button></pre>
+<p>The script will:</p>
+<ul>
+<li>Install an Apache web server (httpd) and the PHP language</li>
+<li>Download the Inventory application and the AWS Software Development Kit (SDK)</li>
+<li>Activate the web server and configure it to automatically start on boot</li>
+</ul>
+<p>This type of script is an excellent way to configure a new instance without having to log in and manually configure software. The script also makes automation easy because a new instance can be launched and fully configured without requiring intervention from technical staff. On a Windows instance, you could use a PowerShell script for configuration.</p>
+<ol start="35">
+<li>Click <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Next: Add Storage</span>
+</li>
+</ol>
+<h3>Step 4: Add storage</h3>
+
+<p>At this step, you can add additional Amazon Elastic Block Store (Amazon EBS) disk volumes and configure their size and performance.</p>
+
+<p>To view a description of each field, hover on the information <i class="fas fa-info-circle"></i> icons.</p>
+
+<p>You will use the default disk size, so no changes are required.</p>
+<ol start="36">
+<li>Click <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Next: Add Tags</span>
+</li>
+</ol>
+<h3>Step 5: Add tags</h3>
+
+<p>Tags allow you to categorize your AWS resources in different ways, such as by purpose, owner, or environment. This is useful when you have many resources of the same type—you can quickly identify a specific resource by its tags. Each tag consists of a <em>key</em> and a <em>value</em>, both of which you define.</p>
+<ol start="37">
+<li>Click <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Add Tag</span> then configure:</li>
+</ol><ul>
+<li>
+<strong>Key:</strong> <input readonly="" class="copyable-inline-input" size="4" type="text" value="Name">
+</li>
+<li>
+<strong>Value:</strong> <input readonly="" class="copyable-inline-input" size="10" type="text" value="App Server">
+</li>
+</ul>
+<p>The <strong>Name</strong> tag will appear on the instance in the EC2 management console.</p>
+<ol start="38">
+<li>Click <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Next: Configure Security Group</span>
+</li>
+</ol>
+<h3>Step 6: Configure security group</h3>
+
+<p>Now associate the instance with the App Security Group (App-SG) you created earlier in the lab.</p>
+<ol start="39">
+<li><p>Click <i class="far fa-dot-circle"></i> <strong>Select an existing security group</strong>.</p></li>
+<li><p>Select <i class="far fa-check-square"></i> <strong>App-SG</strong></p></li>
+</ol>
+<p>The inbound rules display and show that they permit HTTP traffic from anywhere on the internet (0.0.0.0/0).</p>
+<ol start="41">
+<li>Click <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Review and Launch</span>
+</li>
+</ol>
+<p><i class="fas fa-comment"></i> <strong>Note</strong> If you receive a warning that you will not be able to connect to this instance, click <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Continue</span></p>
+
+<h3>Step 7: Review</h3>
+
+<p>This step displays a summary of the configuration for the instance you are about to launch.</p>
+<ol start="42">
+<li>Click <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Launch</span> then configure:</li>
+</ol><ul>
+<li>Select <em>Proceed without a key pair</em>
+</li>
+<li>Select <i class="far fa-check-square"></i> <strong>I acknowledge that...</strong>
+</li>
+<li>Click <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">Launch Instances</span>
+</li>
+</ul>
+<p>Your instance is now launching.</p>
+<ol start="43">
+<li>At the bottom of the page, click <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space: nowrap;">View Instances</span>
+</li>
+</ol>
+<p>The instance may appear in a <em>pending</em> state, which means it is being launched. When the state changes to <em>running</em>, the instance has started booting. Before you can access the instance, the configuration script will install and configure the application.</p>
+
+<p>Before continuing to the next task, wait for the instance state to display <i class="fas fa-circle" style="color:green;"></i> <strong>running</strong>.</p>
+
+<p>While you wait, review the information displayed on the <strong>Description</strong> tab. It includes information about the instance type, security settings, and network settings.</p>
+
+<p><i class="fas fa-comment"></i> <strong>Note</strong> The instance will start running after just a short time. However, the status checks take a few minutes longer.</p>
+
+
+
+<h2 id="step6">Task 4: Testing the application</h2>
+
+<p>You are now ready to test that the application is operational. You can access the web application via the IP address of the EC2 instance.</p>
+<ol start="44">
+<li><p>In the EC2 management console, select <i class="far fa-check-square"></i> <strong>App Server</strong>.</p></li>
+<li><p>On the <strong>Description</strong> tab, copy the <strong>IPv4 Public IP</strong> to your clipboard.</p></li>
+</ol>
+<p><i class="fas fa-comment"></i> <strong>Tip</strong> To copy the IP address, hover on it and click the copy <i class="far fa-copy"></i> icon.</p>
+<ol start="46">
+<li>Open a new web browser tab, paste the IP address into the address bar, and press ENTER.</li>
+</ol>
+<p>The web application appears. Very little information is displayed because the application is not yet connected to the database.</p>
+
+<p>You can now configure the application to use the Amazon RDS DB instance you created earlier. First retrieve the <em>Database Endpoint</em> so that the application knows how to connect to the database.</p>
+<ol start="47">
+<li><p>Return to the <strong>AWS Management Console</strong> but do not close the application tab. (You will return to it soon.)</p></li>
+<li><p>On the <span style="background-color:#232f3e;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">Services <i class="fas fa-angle-down"></i></span> menu, click <strong>RDS</strong>.</p></li>
+<li><p>In the left navigation pane, click <strong>Databases</strong>.</p></li>
+<li><p>Click the <strong>inventory-db</strong> identifier.</p></li>
+<li><p>Scroll down to the <strong>Connectivity &amp; security</strong> section, and copy the <strong>Endpoint</strong> to your clipboard.</p></li>
+</ol>
+<p>It should look similar to: <em>inventory-db.crwxbgqad61a.rds.amazonaws.com</em></p>
+<ol start="52">
+<li><p>Return to the browser tab with the Inventory application.</p></li>
+<li><p>Click <i class="fas fa-cog"></i> <strong>Settings</strong> then configure:</p></li>
+</ol><ul>
+<li>
+<strong>Endpoint:</strong> Paste the endpoint you copied earlier</li>
+<li>
+<strong>Database:</strong> <input readonly="" class="copyable-inline-input" size="9" type="text" value="inventory">
+</li>
+<li>
+<strong>Username:</strong> <input readonly="" class="copyable-inline-input" size="6" type="text" value="master">
+</li>
+<li>
+<strong>Password:</strong> <input readonly="" class="copyable-inline-input" size="12" type="text" value="lab-password">
+</li>
+</ul><ol start="54">
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<p>The application connects to the database, loads some initial data, and displays information. This application allows you to add, edit, or delete an item from a store's inventory.</p>
+
+<p>The inventory information is stored in the Amazon RDS MySQL database you created earlier in the lab. This means that, if the web application server fails, the data will not be lost. It also means that multiple application servers could access the same data.</p>
+
+
+
+<h2 id="step7">Conclusion</h2>
+
+<p>Congratulations! You now have successfully:</p>
+<ul>
+<li>Launched a database using Amazon RDS</li>
+<li>Launched an application server using Amazon EC2</li>
+<li>Automatically installed an application on an EC2 instance</li>
+</ul>
+<h2 id="step8">End Lab</h2>
+
+<p>Follow these steps to close the console, end your lab, and evaluate the experience.</p>
+<ol start="55">
+<li><p>Return to the AWS Management Console.</p></li>
+<li><p>On the navigation bar, click <strong>awsstudent@&lt;AccountNumber&gt;</strong>, and then click <strong>Sign Out</strong>.</p></li>
+<li><p>Click <span style="background-color:#D93025;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#D93025;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">End Lab</span></p></li>
+<li><p>Click <span style="background-color:#DEDEDE;font-family:Google Sans;font-weight:bold;font-size:90%;color:#444;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">OK</span></p></li>
+<li><p>(Optional):</p></li>
+</ol><ul>
+<li>Select the applicable number of stars <i class="far fa-star"></i>
+</li>
+<li>Type a comment</li>
+<li>
+<p>Click <strong>Submit</strong></p>
+<ul>
+<li>1 star = Very dissatisfied</li>
+<li>2 stars = Dissatisfied</li>
+<li>3 stars = Neutral</li>
+<li>4 stars = Satisfied</li>
+<li>5 stars = Very satisfied</li>
+</ul>
+</li>
+</ul>
+<p>You may close the dialog if you don't want to provide feedback.</p>
+
+</div>
+<div class="js-lab-content-outline lab-content__outline">
+<a href="https://in-globalknowledge-jp.qwiklabs.com/classrooms/2201/labs/10526#step1">Lab overview</a><a href="https://in-globalknowledge-jp.qwiklabs.com/classrooms/2201/labs/10526#step2">Start Lab</a><a href="https://in-globalknowledge-jp.qwiklabs.com/classrooms/2201/labs/10526#step3">Task 1: Configuring security</a><a href="https://in-globalknowledge-jp.qwiklabs.com/classrooms/2201/labs/10526#step4">Task 2: Creating an Amazon RDS database</a><a href="https://in-globalknowledge-jp.qwiklabs.com/classrooms/2201/labs/10526#step5">Task 3: Launching an application server using Amazon EC2</a><a href="https://in-globalknowledge-jp.qwiklabs.com/classrooms/2201/labs/10526#step6">Task 4: Testing the application</a><a href="https://in-globalknowledge-jp.qwiklabs.com/classrooms/2201/labs/10526#step7">Conclusion</a><a href="https://in-globalknowledge-jp.qwiklabs.com/classrooms/2201/labs/10526#step8">End Lab</a>
+</div>
+</div>
+
+</div>
+
+
+</div>
+</div>
+<div class="lab-introduction js-lab-introduction is-hidden">
+<div class="lab-introduction__inner">
+<h1 class="headline-1">Welcome to Your First Lab!</h1>
+<ql-icon-button class="js-skip-button">close</ql-icon-button>
+<div class="lab-introduction__video">
+<iframe allow="autoplay; encrypted-media" allowfullscreen="" frameborder="0" id="lab-introduction" src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/yF7EDXKTmoQ.html"></iframe>
+</div>
+<a class="js-skip-button button button--outline">Skip this video</a>
+</div>
+</div>
+
+
+
+</div>
+</main>
+<div class="modal fade" id="lab-details-modal">
+<div class="modal-container">
+<div class="mdl-shadow--24dp modal-content">
+<div class="modal-body">
+<p class="l-mbm">
+This lab will provide experience in using multiple AWS services to deploy a web application.
+</p>
+<p class="small-label l-mbs">
+<strong>
+Duration:
+</strong>
+2m setup
+·
+120m access
+·
+120m completion
+</p>
+<p class="small-label l-mbs">
+<strong>AWS Region:</strong>
+[ap-southeast-1] <strong>Asia Pacific (Singapore)</strong>
+</p>
+<p class="small-label l-mbs">
+
+</p>
+<p class="small-label">
+<strong>
+Permalink:
+</strong>
+<a href="https://in-globalknowledge-jp.qwiklabs.com/catalog_lab/5411">https://in-globalknowledge-jp.qwiklabs.com/catalog_lab/5411</a>
+</p>
+</div>
+<div class="modal-actions">
+<a class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect" data-dismiss="modal" data-upgraded=",MaterialButton,MaterialRipple">
+Got It
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+</div>
+
+
+</div>
+</div>
+<iframe class="l-ie-iframe-fix" src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/saved_resource(1).html"></iframe>
+</div>
+<div class="modal fade" id="lab-review-modal">
+<div class="modal-container">
+<div class="mdl-shadow--24dp modal-content">
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="https://in-globalknowledge-jp.qwiklabs.com/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="✓"><div class="modal-body">
+<p class="label">
+How satisfied are you with this lab?*
+</p>
+<div class="rateit js-rateit" data-rateit-max="5" data-rateit-min="0" data-rateit-resetable="false" data-rateit-step="1" data-rateit-value="0"><div class="rateit-reset" style="display: none;"></div><div class="rateit-range" style="width: 80px; height: 16px;"><div class="rateit-selected" style="height: 16px; width: 0px;"></div><div class="rateit-hover" style="height:16px"></div></div></div>
+<div class="l-mtm">
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="10038" name="lab_review[user_id]" id="lab_review_user_id"></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" value="2201" name="lab_review[classroom_id]" id="lab_review_classroom_id"></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="5411" name="lab_review[lab_id]" id="lab_review_lab_id"></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" value="10526" name="lab_review[focus_id]" id="lab_review_focus_id"></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating"></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Comment</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment"></textarea></div></div>
+</div>
+</div>
+<div class="modal-actions">
+<a class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect" data-dismiss="modal" data-upgraded=",MaterialButton,MaterialRipple">
+Cancel
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<input type="submit" name="commit" value="Submit" disabled="disabled" class="btn mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary" id="submit" data-disabled="false" data-disable-with="Submit" data-upgraded=",MaterialButton,MaterialRipple"><span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></input>
+</div>
+</form>
+
+</div>
+</div>
+<iframe class="l-ie-iframe-fix" src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/saved_resource(2).html"></iframe>
+</div>
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    initLabContent( );
+  ql.labOutline.links.init();
+  ql.labOutline.layout.init();
+  initLabReviewModal();
+  ql.labAssessment.init();
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"All done? If you end this lab, you will lose all your work. You may not be able to restart the lab if there is a quota limit. Are you sure you want to end this lab?\n","in_progress":"*In Progress*","ending":"*Ending*","starting":"*Starting, please wait*","end_concurrent_labs":"Sorry, you can only run one lab at a time. To start this lab, please confirm that you want all of your existing labs to end.\n","copied":"Copied","no_resource":"Error retrieving resource.","no_support":"No Support","mac_press":"Press ⌘-C to copy","thanks_review":"Thanks for reviewing this lab.","windows_press":"Press Ctrl-C to copy","days":"days"} );
+  ql.labRun.init();
+  ql.initHeader();
+  ql.navigation.init();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+<style>
+  .mdl-layout__container {
+    position: static
+  }
+</style>
+
+
+<iframe data-product="web_widget" title="No content" tabindex="-1" aria-hidden="true" src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/saved_resource(3).html" style="width: 0px; height: 0px; border: 0px; position: absolute; top: -9999px;"></iframe><div><iframe title="Opens a widget where you can chat to one of our agents" id="launcher" tabindex="0" style="width: 107px; height: 50px; padding: 0px; margin: 10px 20px; position: fixed; bottom: 0px; right: 0px; overflow: visible; opacity: 1; border: 0px; z-index: 999998; transition-duration: 250ms; transition-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1); transition-property: opacity, top, bottom;" src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/saved_resource(4).html"></iframe><iframe title="Find more information here" id="webWidget" tabindex="-1" style="width: 362px; max-height: calc(100vh - 10px); height: 550px; position: fixed; opacity: 0; border: 0px; transition-duration: 250ms; transition-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1); transition-property: opacity, top, bottom; top: -9999px; visibility: hidden; z-index: 999999;" src="./Architecting on AWS - Lab 2 - Deploying a Web Application on AWS _ Qwiklabs_files/saved_resource(5).html"></iframe></div></body></html>

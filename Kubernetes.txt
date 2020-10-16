@@ -1,0 +1,19 @@
+To counter the problems of monolithic application, we came up with a Microservices Architecture.
+Monolithic application will have a single code base which are tightly couple with all the services like uber mail, billing, passenter management, location services, customer services, notification. If we plan to upgrade any one of service change or update of payments, there may be impact to other servicces which may malfunction or stop working. To overcome of these problems, we came up with the microservices which are loosely coupled and can be deployed in Kubernetes.
+
+Problmes with out kubernetes:
+1) Each services's Monitoring is difficult.
+2) Scaling a particular services based on load is not possible
+3) Too much manual intervention required for managing containers
+4) Managing containers on multiple machines become difficult.
+
+Kubernetes being a container orchestration tool, is used when our application is distributed in multiple containers. It's job is to monitor, scale, restart containers automatically even if they are spread across multiple nodes.
+
+Featuring of Kubernetes:
+- Managing Multiple containers as one entity
+- Resource usage monitoring
+- Netowrking
+- Rolling update
+- Load balancing
+- Health checks
+- Managing Multiple Containers as one entity

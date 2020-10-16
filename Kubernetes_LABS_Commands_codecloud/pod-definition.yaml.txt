@@ -1,0 +1,12 @@
+apiVersioin: v1
+kind: Pod or Service or ReplicaSet or Deployment or ReplicationController
+metadata:
+ name: myapp-pod
+ labels:
+  app: myapp
+  type: front-end
+
+spec:
+ containers:
+  - name: nginx-container
+    image: nginx

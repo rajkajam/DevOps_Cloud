@@ -1,0 +1,45 @@
+ ssh -i "EC2-Rama.pem" ubuntu@ec2-13-127-32-119.ap-south-1.compute.amazonaws.com
+
+On Puppet Master node
+apt-get update
+wget https://apt.puppetlabs.com/puppet-release-bionic.deb
+dpkg -i puppet-release-bionic.deb
+apt-get install puppetmaster
+apt policy puppetmaster
+systemctl status puppet-master.service ( start the service if not running)
+vi /etc/default/puppet-master
+JAVA_ARGS="-Xms512m -Xmx512m" ( save the file and exit. this is to set the memory to 512 for puppet. By default puppet will take 1gb ram)
+systemctl restart puppet-master.service
+
+
+ON Slave node.
+
+apt-get update
+wget https://apt.puppetlabs.com/puppet-release-bionic.deb
+dpkg -i puppet-release-bionic.deb
+apt-get install puppet
+systemctl start puppet
+systemctl enable puppet
+
+ON Puppet Master:
+puppet cert list ( to see for slave nodes request )
+puppet cert sign --all
+
+ufw allow 8140/tcp
+
+mkdir -p /etc/puppet/code/environments/production/manifests
+vi /etc/puppet/code/environments/production/manifests/site.pp
+file {'/tmp/it_works.txt':
+ ensure  => present,
+ mode    => '0644',
+ content => "It works on ${ipaddress_eth0}!\n",
+}
+
+systemctl restart puppetmaster
+
+On Client:
+puppet agent --test
+
+variables
+loops
+conditions (onlyif and unless )

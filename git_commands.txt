@@ -1,0 +1,315 @@
+Git is a version-control system for tracking changes in computer files and coordinating work on those files among multiple people. It is primarily used for source-code management in software development, but it can be used to keep track of changes in any set of files.
+
+mkdir /home/ubuntu/devops
+cd /home/ubuntu/devops
+echo "hello from test1: > 1.txt
+echo "hello from test2: > 2.txt
+
+ubuntu@ip-172-31-38-4:~/devops$ git init
+Initialized empty Git repository in /home/ubuntu/devops/.git/
+
+ubuntu@ip-172-31-38-4:~/devops$ ls .git/
+HEAD  branches  config  description  hooks  info  objects  refs
+ubuntu@ip-172-31-38-4:~/devops$ git status
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        1.txt
+        2.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+ubuntu@ip-172-31-38-4:~/devops$ git add .
+ubuntu@ip-172-31-38-4:~/devops$ git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+        new file:   1.txt
+        new file:   2.txt
+
+ubuntu@ip-172-31-38-4:~/devops$ git commit -m "first commit"
+[master (root-commit) 7302d4d] first commit
+ Committer: Ubuntu <ubuntu@ip-172-31-38-4.ap-south-1.compute.internal>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 2 insertions(+)
+ create mode 100644 1.txt
+ create mode 100644 2.txt
+
+ubuntu@ip-172-31-38-4:~/devops$ git status
+On branch master
+nothing to commit, working tree clean
+
+ubuntu@ip-172-31-38-4:~/devops$ echo "test from test3" >3.txt
+ubuntu@ip-172-31-38-4:~/devops$ git status
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        3.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+ubuntu@ip-172-31-38-4:~/devops$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   2.txt
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        3.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+ubuntu@ip-172-31-38-4:~/devops$
+
+ubuntu@ip-172-31-38-4:~/devops$ git remote add origin "https://github.com/rajkajam/DevOps.git"
+
+ubuntu@ip-172-31-38-4:~/devops$ git push origin master
+Username for 'https://github.com': rajkajam
+Password for 'https://rajkajam@github.com':
+To https://github.com/rajkajam/DevOps.git
+ ! [rejected]        master -> master (fetch first)
+error: failed to push some refs to 'https://github.com/rajkajam/DevOps.git'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+Issue: You have created a new repository, added a few commits to it, and now you are trying to pull from a remote repository that already has some commits of its own. Git will also throw the error in this case, since it has no idea how the two projects are related.
+Solution: The error is resolved by toggling the allow-unrelated-histories switch. After a git pull or git merge command, add the following tag
+
+git pull origin master --allow-unrelated-histories ( https://www.educative.io/edpresso/the-fatal-refusing-to-merge-unrelated-histories-git-error)
+From https://github.com/rajkajam/DevOps
+ * branch            master     -> FETCH_HEAD
+Merge made by the 'recursive' strategy.
+ DevOps_guide           |  16 ++++++++++++++++
+ Dockerfile             |   2 ++
+ README.md              |   1 +
+ azure-pipelines.yml    |  19 +++++++++++++++++++
+ devopsIQ/images/1.jpg  | Bin 0 -> 401663 bytes
+ devopsIQ/images/2.jpeg | Bin 0 -> 14441 bytes
+ devopsIQ/index.html    |   5 +++++
+ docker-compose         | Bin 0 -> 11748168 bytes
+ edureka.py             |   1 +
+ 9 files changed, 44 insertions(+)
+ create mode 100644 DevOps_guide
+ create mode 100644 Dockerfile
+ create mode 100644 README.md
+ create mode 100644 azure-pipelines.yml
+ create mode 100644 devopsIQ/images/1.jpg
+ create mode 100644 devopsIQ/images/2.jpeg
+ create mode 100644 devopsIQ/index.html
+ create mode 100644 docker-compose
+ create mode 100644 edureka.py
+ubuntu@ip-172-31-38-4:~/devops$ ls
+1.txt  2.txt  3.txt  DevOps_guide  Dockerfile  README.md  azure-pipelines.yml  devopsIQ  docker-compose  edureka.py
+
+ubuntu@ip-172-31-38-4:~/devops$ git push origin master
+Username for 'https://github.com': rajkajam
+Password for 'https://rajkajam@github.com':
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (6/6), 541 bytes | 541.00 KiB/s, done.
+Total 6 (delta 3), reused 0 (delta 0)
+remote: Resolving deltas: 100% (3/3), completed with 1 local object.
+To https://github.com/rajkajam/DevOps.git
+   0fdcc79..9292708  master -> master
+
+ubuntu@ip-172-31-38-4:~/devops$ ls
+1.txt  2.txt  3.txt  DevOps_guide  Dockerfile  README.md  azure-pipelines.yml  devopsIQ  docker-compose  edureka.py
+ubuntu@ip-172-31-38-4:~/devops$ rm 1.txt 2.txt 3.txt
+
+ubuntu@ip-172-31-38-4:~/devops$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        deleted:    1.txt
+        deleted:    2.txt
+        deleted:    3.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+ubuntu@ip-172-31-38-4:~/devops$ git restore .  ( to restore the deleted files)
+ubuntu@ip-172-31-38-4:~/devops$ git rm 1.txt 2.txt 3.txt
+ubuntu@ip-172-31-38-4:~/devops$ git status
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        deleted:    1.txt
+        deleted:    2.txt
+        deleted:    3.txt
+
+ubuntu@ip-172-31-38-4:~/devops$ git restore --staged .
+ubuntu@ip-172-31-38-4:~/devops$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        deleted:    1.txt
+        deleted:    2.txt
+        deleted:    3.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+ubuntu@ip-172-31-38-4:~/devops$ echo "test from file4" > 4.txt
+ubuntu@ip-172-31-38-4:~/devops$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        deleted:    1.txt
+        deleted:    2.txt
+        deleted:    3.txt
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        4.txt
+
+ubuntu@ip-172-31-38-4:~/devops$ git add .
+ubuntu@ip-172-31-38-4:~/devops$ git status
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        deleted:    1.txt
+        deleted:    2.txt
+        deleted:    3.txt
+        new file:   4.txt
+ubuntu@ip-172-31-38-4:~/devops$ git commit -m "deleted txt files"
+ubuntu@ip-172-31-38-4:~/devops$ git status
+On branch master
+nothing to commit, working tree clean
+
+ubuntu@ip-172-31-38-4:~/devops$ git push origin master
+Username for 'https://github.com': rajkajam
+Password for 'https://rajkajam@github.com':
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 245 bytes | 245.00 KiB/s, done.
+Total 2 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/rajkajam/DevOps.git
+   cc82a92..c694813  master -> master
+
+Another developer who wants to clone this repository.
+mkdir /home/ubuntu/test
+git clone https://github.com/rajkajam/DevOps.git  ( to copy the whole respository to the local)
+ubuntu@ip-172-31-38-4:~/test$ ls
+DevOps
+
+git pull origin master  ( to get the latest commited files from repository )
+
+Creating branches in git for individual developers:
+
+git branch feature1 ( to create a new branch)
+git branch ( list branches)
+git branch -D freature1 (delete branch)
+git branch feature1
+git checkout feature ( switch to feature1 branch )
+ls
+echo "test file" > 5.txt
+git add .
+git commit -m "added file to feature branch"
+git branch  ( * indicated the current branch that you are working)
+git checkout master
+ls  ( you can't see the 5.txt)
+git status
+git checkout feature1
+git status
+git push origin feature1 (pushing the updates to feature1 branch, not master)
+
+git log (helps to see the history of your respository)
+git stash (For complete isolation of master and other branches) Use git stash when you want to record the current state of the working directory and the index, but want to go back to a clean working directory)
+
+ubuntu@ip-172-31-38-4:~/devops$ pwd
+/home/ubuntu/test/DevOps
+git checkout feature1
+echo "stash file check" > 7.txt
+ls (can see 7.txt)
+git checkout master
+ls ( you can see 7.txt file here because it't not being tracked since it is not part of any branch)
+git checkout feature1
+git add .
+ls
+git checkout master
+ls (I can still see 7.txt. this may create a problme/confusion when you are working with in branches with production code. because you dont want to see this file in master branch since it's not merged yet)
+git checkout feature1
+vi 5.txt ( change the content of the file)
+git add .
+git checkout master
+cat 5.txt ( the changes are also there in master. I don't want this update. to avoid confustion git stash)
+git checkout feature1
+ubuntu@ip-172-31-38-4:~/test/DevOps$ git stash
+Saved working directory and index state WIP on feature1: 98fa53c added to feature branch
+git checkout master
+ls ( I can see 7.txt and is no loner visible here and can't see updated 5.txt file)
+git checkout feature1
+ls ( you can't see 7.txt and updated file of 5.txt. it means the changes performed till the time you do git stash are saved but can't visible )
+git stash pop ( come back to you previous (before stash working state)
+ls ( I have 7.txt and modifed 5.txt)
+git status
+git add .
+git commit -m "commiting stash changes"
+ls
+git checkout master
+ls ( you don;t see feature branch commits, you can;t see dangle files)
+
+git revert ( to revert the changes)
+git branch ( on feature1)
+git log ( see the commit ID)
+git revert <commit ID>  ( want to rever to older version)
+git log ( see for log revert "commiting")
+
+git diff ( this command helps us in checking the differences between two version of a file)
+git diff <commit-id of verion x> <commit-id of verion y>   ( commit ids can be obtained from the output of git log)
+
+git merge ( to merge feature1 branch with the local master one)
+
+git checkout master
+git merge feature1
+Updating ac38a8b..0117c64
+Fast-forward
+ 5.txt | 1 +
+ 7.txt | 1 +
+ 2 files changed, 2 insertions(+)
+ create mode 100644 5.txt
+ create mode 100644 7.txt
+ls ( now we can see updated 5.txt and 7.txt files)
+git push origin master ( to update the merged changes to the remote repo)
+Username for 'https://github.com': rajkajam
+Password for 'https://rajkajam@github.com':
+Total 0 (delta 0), reused 0 (delta 0)
+To https://github.com/rajkajam/DevOps.git
+   ac38a8b..0117c64  master -> master
+
+
+
+
+
+
+
+
+
+
+
+

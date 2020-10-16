@@ -1,0 +1,69 @@
+https://www.youtube.com/watch?v=JHoy3lDZOfY
+
+Jenkins is an open source automation server written in Java. It helps to automate the non-human part of the software development process, with continuous integration and facilitating technical aspects of continuos integration.
+
+jenkins installation on ubuntu:
+
+sudo apt-get update
+
+wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
+sudo apt-get update
+sudo apt-get install jenkins
+    
+sudo service jenkins status
+
+open the port 8080 as inbound traffic to the jenkins serveer.
+
+serverIPaddress:8080 (open in browser)
+
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword - the default jenkins can be seen here in this file for initial login in jenkins web page.
+
+once the page is opended, click on "install suggested plugins" to update all the required jenkin plugins.
+
+Once the requried plugins are installed, it will prompt to create a user Id and password for jenkins login.
+once created the user ID and setup the password, save settings and click on "start using jenkins" 
+
+Now discuss and setup Jenkins Master Slave architecture:
+
+-> Jenkins Master-Slave architecture is important to accomplish Continuous deployment.
+-> Jenkins Slave need to have jenkins installed on them
+-> Useful in scenarios where it distributes the load when we have parallel complex builds.
+
+go to -> Jenkins dashboard -> Manager Jenkins -> Configure global security > Agents -> select "Random"
+
+lables are used to group multiple slaves to group one for execution of any job by specifying the lable name.
+
+Setup Jenkins slave node.
+
+install java on jenkins slave node before you configure it as slave.
+apt install default-jre              # version 2:1.11-72, or
+apt install openjdk-11-jre-headless  # version 11.0.8+10-0ubuntu1~20.04
+apt install openjdk-13-jre-headless  # version 13.0.3+3-1ubuntu2
+apt install openjdk-14-jre-headless  # version 14.0.1+7-1ubuntu1
+apt install openjdk-8-jre-headless   # version 8u265-b01-0ubuntu2~20.04
+
+add Jenkins slave node using ssh client authentication machanism.
+https://www.youtube.com/watch?v=NlwR_FEsE0A
+https://medium.com/@chathurams.sa/step-by-step-guide-to-add-jenkins-slave-nodes-f2e756c8849e
+
+Now create a CI/CD pipeline triggered by Git Web hook:
+Steps:
+1) Get the project from https://github.com/hshar/devopsIQ.git
+2) Install Docker on both the slaves
+3) Configure jenkins to build the project on slave1 if successful, should be built on slave2
+4) Finally, trigger the job using git web-hooks
+
+On Slave machines:
+sudo apt-get install docker.io (install docker)
+
+on Jenkins pipeline, build execute shell: for Test
+sudo docker rm -f $(sudo docker ps -a -q)
+sudo docker build /home/ubuntu/jenkins/workspace/Test -t test
+sudo docker run -it -p 82:80 -d test
+
+on Jenkins pipeline, build execute shell: for Prod
+sudo docker rm -f $(sudo docker ps -a -q)
+sudo docker build /home/ubuntu/jenkins/workspace/Prod -t production
+sudo docker run -it -p 80:80 -d production
+

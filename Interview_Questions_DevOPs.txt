@@ -1,0 +1,7 @@
+https://www.youtube.com/watch?v=JHoy3lDZOfY
+at 8:53:00 time stamp
+
+1) Explian the Git architecture
+It is a distributed version control systems.
+
+2)
